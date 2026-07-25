@@ -15,3 +15,10 @@ from .event import (
     EventResponse,
     EventsResponse
 )
+
+from .audit import (
+    AuditAction,
+    AuditEntity,
+    AuditLogResponse,
+    AuditLogsResponse
+)
