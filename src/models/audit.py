@@ -44,7 +44,7 @@ class AuditEntity(str, Enum):
 class AuditLog(Document):
 
     # User who performed action
-    user: Optional[str] = None
+    user_email: str
 
     # Action type
     action: AuditAction
