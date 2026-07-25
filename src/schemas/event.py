@@ -74,7 +74,8 @@ class EventCreate(BaseModel):
     )
 
     description: str = Field(
-        min_length=10
+        min_length=10,
+        max_length=1000
     )
 
     library: str = Field(
@@ -122,7 +123,8 @@ class EventUpdate(BaseModel):
 
     description: str | None = Field(
         default=None,
-        min_length=10
+        min_length=10,
+        max_length=1000
     )
 
 
