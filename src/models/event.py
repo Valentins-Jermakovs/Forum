@@ -76,8 +76,8 @@ class LibraryEvent(Document):
 
 
     # Date and time
-    date: date
-    time: time
+    event_date: date
+    event_time: time
     duration: str   # 2 hours, 30 minutes, etc.
 
 

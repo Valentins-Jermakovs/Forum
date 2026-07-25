@@ -22,18 +22,11 @@ class AuditAction(str, Enum):
     UPDATE = "update"
     DELETE = "delete"
 
-    REGISTER = "register"
-    CANCEL = "cancel"
-
-    LOGIN = "login"
-    LOGOUT = "logout"
-
 
 # Entities
 class AuditEntity(str, Enum):
 
     EVENT = "event"
-    USER = "user"
 
 
 
