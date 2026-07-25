@@ -15,6 +15,9 @@ from schemas.event import EventCreate
 # Services:
 from services import audit_service
 
+# Classes
+from .normalizer import event_normalizer
+
 
 
 # =====================================================
@@ -33,14 +36,14 @@ class EventCreator:
         user_email: str
     ) -> LibraryEvent:
 
+        # Normalize the event data
+        data = event_normalizer.normalize_create(data)
 
         # Create a new LibraryEvent instance with the provided data, 
         # user ID, and email.
         event = LibraryEvent(
             **data.model_dump(),
-
             creator_id=user_id,
-
             created_by=user_email
         )
 

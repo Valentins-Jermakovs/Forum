@@ -21,6 +21,8 @@ from schemas.event import ParticipantCreate
 # Services:
 from services import audit_service
 
+# Classes
+from .normalizer import event_normalizer
 
 
 # =====================================================
@@ -37,6 +39,7 @@ class EventRegistration:
         participant: ParticipantCreate
     ) -> LibraryEvent:
 
+        participant = event_normalizer.normalize_participant(participant)
 
         # Check event status
         if event.status != EventStatus.ACTIVE:

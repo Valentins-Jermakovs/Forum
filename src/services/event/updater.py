@@ -17,6 +17,7 @@ from schemas.event import EventUpdate
 
 # Classes:
 from .validator import EventPermissionValidator
+from .normalizer import event_normalizer
 
 # Services:
 from services import audit_service
@@ -47,6 +48,8 @@ class EventUpdater:
         user_email: str
     ) -> LibraryEvent:
 
+        # Normalize the event data (update)
+        data = event_normalizer.normalize_update(data)
 
         # Check owner
         await self.permission.check_owner(
