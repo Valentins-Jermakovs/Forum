@@ -67,3 +67,8 @@ class EventRemover:
             description="Deleted library event",
             metadata=event_data
         )
+
+        return {
+            "message": "Event deleted successfully",
+            "event_id": str(event.id)
+        }
