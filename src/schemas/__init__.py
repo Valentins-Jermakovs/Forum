@@ -1,4 +1,4 @@
-# =======This file is used to export all schemas=========
+# =======This file is used to export all schemas=======
 
 # =====================================================
 #                        Imports

@@ -7,7 +7,7 @@ from beanie import Document
 from pydantic import Field
 from datetime import datetime
 from enum import Enum
-from typing import Optional, Any
+from typing import Any
 
 
 
