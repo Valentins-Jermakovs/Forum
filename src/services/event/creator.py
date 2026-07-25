@@ -17,7 +17,7 @@ from services import audit_service
 
 # Classes
 from .normalizer import event_normalizer
-
+from .validator import event_uniqueness_validator
 
 
 # =====================================================
@@ -38,6 +38,12 @@ class EventCreator:
 
         # Normalize the event data
         data = event_normalizer.normalize_create(data)
+
+        # Validate event uniqueness
+        await event_uniqueness_validator.check_title_unique(
+            title=data.title,
+            library=data.library
+        )
 
         # Create a new LibraryEvent instance with the provided data, 
         # user ID, and email.

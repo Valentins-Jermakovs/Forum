@@ -16,7 +16,10 @@ from models import (
 from schemas.event import EventUpdate
 
 # Classes:
-from .validator import EventPermissionValidator
+from .validator import (
+    event_permission_validator,
+    event_uniqueness_validator
+)
 from .normalizer import event_normalizer
 
 # Services:
@@ -30,16 +33,6 @@ from services import audit_service
 # This class is responsible for updating existing events.
 class EventUpdater:
 
-    # Constructor - initializes the EventPermissionValidator 
-    # to check user permissions before updating an event.
-    def __init__(
-        self
-    ):
-
-        self.permission = EventPermissionValidator()
-
-
-
     async def update(
         self,
         event: LibraryEvent,
@@ -51,8 +44,24 @@ class EventUpdater:
         # Normalize the event data (update)
         data = event_normalizer.normalize_update(data)
 
+
+        # New values for title and library, 
+        # if provided in the update data
+        new_title = data.title or event.title
+        new_library = data.library or event.library
+
+
+        # Check if the new title is unique within the same library,
+        # excluding the current event being updated
+        await event_uniqueness_validator.check_title_unique(
+            title=new_title,
+            library=new_library,
+            exclude_id=str(event.id)
+        )
+
+
         # Check owner
-        await self.permission.check_owner(
+        await event_permission_validator.check_owner(
             event,
             user_id
         )
