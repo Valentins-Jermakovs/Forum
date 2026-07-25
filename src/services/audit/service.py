@@ -2,6 +2,16 @@
 #                        Imports
 # =====================================================
 
+# Libraries:
+from typing import Any
+
+# Models:
+from models import (
+    AuditAction,
+    AuditEntity,
+    AuditLog
+)
+
 # Classes:
 from .writer import AuditWriter
 from .reader import AuditReader
@@ -22,9 +32,37 @@ class AuditService:
 
     def __init__(self):
 
-        self.writer = AuditWriter()
-        self.reader = AuditReader()
-        self.exporter = AuditExporter()
+        self._writer = AuditWriter()
+        self._reader = AuditReader()
+        self._exporter = AuditExporter()
+
+
+    async def create_log(
+        self,
+        user_email: str,
+        action: AuditAction,
+        entity: AuditEntity,
+        description: str,
+        success: bool = True,
+        metadata: dict[str, Any] | None = None
+    ) -> AuditLog:
+
+        return await self._writer.create_log(
+            user_email=user_email,
+            action=action,
+            entity=entity,
+            description=description,
+            success=success,
+            metadata=metadata
+        )
+
+
+    async def get_logs(self, **kwargs):
+        return await self._reader.get_logs(**kwargs)
+
+
+    async def export_csv(self, **kwargs):
+        return await self._exporter.export_csv(**kwargs)
 
 
 # Create instance of the AuditService to be used throughout the application.

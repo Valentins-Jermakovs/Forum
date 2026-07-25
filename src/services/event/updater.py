@@ -3,10 +3,14 @@
 # =====================================================
 
 # Libraries:
-import datetime
+from datetime import datetime
 
 # Models:
-from models.event import LibraryEvent
+from models import (
+    LibraryEvent, 
+    AuditAction, 
+    AuditEntity
+)
 
 # Schemas:
 from schemas.event import EventUpdate
@@ -14,6 +18,8 @@ from schemas.event import EventUpdate
 # Classes:
 from .validator import EventPermissionValidator
 
+# Services:
+from services import audit_service
 
 
 # =====================================================
@@ -25,7 +31,9 @@ class EventUpdater:
 
     # Constructor - initializes the EventPermissionValidator 
     # to check user permissions before updating an event.
-    def __init__(self):
+    def __init__(
+        self
+    ):
 
         self.permission = EventPermissionValidator()
 
@@ -35,7 +43,8 @@ class EventUpdater:
         self,
         event: LibraryEvent,
         data: EventUpdate,
-        user_id: int
+        user_id: int,
+        user_email: str
     ) -> LibraryEvent:
 
 
@@ -45,9 +54,17 @@ class EventUpdater:
             user_id
         )
 
+        # Save old values for audit
+        old_data = {
+            "title": event.title,
+            "library": event.library,
+            "place": event.place,
+            "category": event.category.value,
+            "status": event.status.value
+        }
 
-        # Update event fields with the provided data, 
-        # excluding any fields that are None.
+
+        # Get only provided fields
         update_data = data.model_dump(
             exclude_none=True
         )
@@ -68,5 +85,20 @@ class EventUpdater:
         # Update the event in the database
         await event.save()
 
+        # Write audit log
+        await audit_service.create_log(
+            user_email=user_email,
+            action=AuditAction.UPDATE,
+            entity=AuditEntity.EVENT,
+            description="Updated library event",
+            metadata={
+                "event_id": str(event.id),
+                "changed_fields": list(
+                    update_data.keys()
+                ),
+                "old_data": old_data,
+                "new_data": update_data
+            }
+        )
 
         return event

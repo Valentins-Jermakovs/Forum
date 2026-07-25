@@ -4,11 +4,17 @@
 
 # Libraries:
 from fastapi import HTTPException
-import datetime
+from datetime import datetime
 
 # Models:
-from models.event import LibraryEvent
+from models import (
+    LibraryEvent,
+    AuditAction, 
+    AuditEntity
+)
 
+# Services:
+from services import audit_service
 
 
 # =====================================================
@@ -62,5 +68,17 @@ class EventCancellation:
         # Save
         await event.save()
 
+        # Write audit log
+        await audit_service.create_log(
+            user_email=participant.email,
+            action=AuditAction.CANCEL_REGISTRATION,
+            entity=AuditEntity.EVENT,
+            description="Cancelled participant registration",
+            metadata={
+                "event_id": str(event.id),
+                "event_title": event.title,
+                "participant_name": participant.name
+            }
+        )
 
         return event

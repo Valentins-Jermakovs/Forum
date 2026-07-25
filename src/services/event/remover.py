@@ -2,11 +2,18 @@
 #                        Imports
 # =====================================================
 
-# Models
-from models.event import LibraryEvent
+# Models:
+from models import (
+    LibraryEvent, 
+    AuditAction, 
+    AuditEntity
+)
 
 # Classes:
 from .validator import EventPermissionValidator
+
+# Services:
+from services import audit_service
 
 
 
@@ -19,7 +26,9 @@ class EventRemover:
 
     # Constructor - initializes the EventPermissionValidator 
     # to check user permissions before deleting an event.
-    def __init__(self):
+    def __init__(
+        self
+    ):
 
         self.permission = EventPermissionValidator()
 
@@ -28,7 +37,8 @@ class EventRemover:
     async def delete(
         self,
         event: LibraryEvent,
-        user_id: int
+        user_id: int,
+        user_email: str
     ):
 
         # Check if the user is the owner of the event
@@ -37,5 +47,23 @@ class EventRemover:
             user_id
         )
 
+        # Save event information before deletion
+        event_data = {
+            "event_id": str(event.id),
+            "title": event.title,
+            "library": event.library,
+            "category": event.category.value,
+            "status": event.status.value
+        }
+
         # Delete event from data base
         await event.delete()
+
+        # Write audit log
+        await audit_service.create_log(
+            user_email=user_email,
+            action=AuditAction.DELETE,
+            entity=AuditEntity.EVENT,
+            description="Deleted library event",
+            metadata=event_data
+        )

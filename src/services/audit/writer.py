@@ -15,7 +15,7 @@ from models.audit import (
 
 
 # =====================================================
-#                     Audit Reader
+#                     Audit Writer
 # =====================================================
 
 # This class is responsible for writing audit logs to the database.

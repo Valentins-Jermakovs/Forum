@@ -3,10 +3,17 @@
 # =====================================================
 
 # Models:
-from models.event import LibraryEvent
+from models import (
+    LibraryEvent, 
+    AuditAction, 
+    AuditEntity
+)
 
 # Schemas:
 from schemas.event import EventCreate
+
+# Services:
+from services import audit_service
 
 
 
@@ -18,7 +25,6 @@ from schemas.event import EventCreate
 # It takes the event data, along with the user ID and email of the creator, 
 # and creates a new LibraryEvent instance in the database.
 class EventCreator:
-
 
     async def create(
         self,
@@ -40,6 +46,18 @@ class EventCreator:
 
         # Save the new event to the database
         await event.insert()
+
+        # Write audit log
+        await audit_service.create_log(
+            user_email=user_email,
+            action=AuditAction.CREATE,
+            entity=AuditEntity.EVENT,
+            description="Created library event",
+            metadata={
+                "event_id": str(event.id),
+                "title": event.title
+            }
+        )
 
 
         return event

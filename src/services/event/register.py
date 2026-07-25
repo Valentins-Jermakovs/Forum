@@ -4,17 +4,22 @@
 
 # Libraries:
 from fastapi import HTTPException
-import datetime
+from datetime import datetime
 
 # Models:
-from models.event import (
+from models import (
     LibraryEvent,
     Participant,
-    EventStatus
+    EventStatus,
+    AuditAction, 
+    AuditEntity
 )
 
 # Schemas
 from schemas.event import ParticipantCreate
+
+# Services:
+from services import audit_service
 
 
 
@@ -25,7 +30,6 @@ from schemas.event import ParticipantCreate
 # This class is responsible for handling 
 # the registration of participants to events.
 class EventRegistration:
-
 
     async def register(
         self,
@@ -77,6 +81,19 @@ class EventRegistration:
 
         # Save changes
         await event.save()
+
+        # Write audit log
+        await audit_service.create_log(
+            user_email=participant.email,
+            action=AuditAction.REGISTER,
+            entity=AuditEntity.EVENT,
+            description="Participant registered for event",
+            metadata={
+                "event_id": str(event.id),
+                "event_title": event.title,
+                "participant_name": participant.name
+            }
+        )
 
 
         return event
