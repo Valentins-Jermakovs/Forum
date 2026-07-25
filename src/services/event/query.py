@@ -20,21 +20,13 @@ class EventQueryBuilder:
 
     def build(
         self,
-
         title: str | None = None,
-
         library: str | None = None,
-
         category: EventCategory | None = None,
-
         status: EventStatus | None = None,
-
         creator_id: int | None = None,
-
         event_date: str | None = None,
-
         participant_email: str | None = None
-
     ) -> dict:
 
         # Query

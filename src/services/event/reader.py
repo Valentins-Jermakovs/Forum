@@ -3,7 +3,11 @@
 # =====================================================
 
 # Models:
-from models.event import LibraryEvent
+from models.event import (
+    LibraryEvent, 
+    EventCategory, 
+    EventStatus
+)
 
 # Query
 from .query import EventQueryBuilder
@@ -29,13 +33,25 @@ class EventReader:
         self,
         offset: int = 0,
         limit: int = 20,
-        **filters
+        title: str | None = None,
+        library: str | None = None,
+        category: EventCategory | None = None,
+        status: EventStatus | None = None,
+        creator_id: int | None = None,
+        event_date: str | None = None,
+        participant_email: str | None = None
     ) -> dict:
 
 
         # Query the database for events based on the provided filters,
         query = self.query_builder.build(
-            **filters
+            title=title,
+            library=library,
+            category=category,
+            status=status,
+            creator_id=creator_id,
+            event_date=event_date,
+            participant_email=participant_email
         )
 
         # List of events and total count of events matching the query
