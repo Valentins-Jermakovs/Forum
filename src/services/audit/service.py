@@ -12,6 +12,9 @@ from models import (
     AuditLog
 )
 
+# Schemas
+from schemas import AuditLogsResponse
+
 # Classes:
 from .writer import AuditWriter
 from .reader import AuditReader
@@ -57,12 +60,44 @@ class AuditService:
         )
 
 
-    async def get_logs(self, **kwargs):
-        return await self._reader.get_logs(**kwargs)
+    async def get_logs(
+        self,
+        offset: int = 0,
+        limit: int = 20,
+        user_email: str | None = None,
+        action: AuditAction | None = None,
+        entity: AuditEntity | None = None,
+        success: bool | None = None,
+        description: str | None = None
+    ) -> AuditLogsResponse:
 
 
-    async def export_csv(self, **kwargs):
-        return await self._exporter.export_csv(**kwargs)
+        return await self._reader.get_logs(
+            offset=offset,
+            limit=limit,
+            user_email=user_email,
+            action=action,
+            entity=entity,
+            success=success,
+            description=description
+        )
+
+
+    async def export_csv(
+        self,
+        user_email: str | None = None,
+        action: AuditAction | None = None,
+        entity: AuditEntity | None = None,
+        success: bool | None = None,
+        description: str | None = None
+    ):
+        return await self._exporter.export_csv(
+            user_email=user_email,
+            action=action,
+            entity=entity,
+            success=success,
+            description=description
+        )
 
 
 # Create instance of the AuditService to be used throughout the application.

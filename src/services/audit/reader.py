@@ -29,12 +29,20 @@ class AuditReader:
         self,
         offset: int = 0,
         limit: int = 20,
-        **filters
+        user_email: str | None = None,
+        action=None,
+        entity=None,
+        success: bool | None = None,
+        description: str | None = None
     ) -> dict:
 
         # Build query using the AuditQueryBuilder
         query = self.query_builder.build(
-            **filters
+            user_email=user_email,
+            action=action,
+            entity=entity,
+            success=success,
+            description=description
         )
 
 
