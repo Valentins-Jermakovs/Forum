@@ -5,4 +5,5 @@
 # =====================================================
 
 # Utils:
-from .token_utils import jwt_validator
+from .jwt_payload import jwt_payload
+from .jwt_validator import jwt_validator
