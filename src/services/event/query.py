@@ -31,7 +31,9 @@ class EventQueryBuilder:
 
         creator_id: int | None = None,
 
-        event_date: str | None = None
+        event_date: str | None = None,
+
+        participant_email: str | None = None
 
     ) -> dict:
 
@@ -78,6 +80,11 @@ class EventQueryBuilder:
         if event_date:
 
             query["event_date"] = event_date
+
+        # Participiant email
+        if participant_email:
+
+            query["participants.email"] = participant_email
 
 
         return query

@@ -19,12 +19,12 @@ from schemas.event import ParticipantCreate
 
 
 # =====================================================
-#              Event Registration Service
+#               Event Registration
 # =====================================================
 
 # This class is responsible for handling 
 # the registration of participants to events.
-class EventRegistrationService:
+class EventRegistration:
 
 
     async def register(

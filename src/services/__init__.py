@@ -6,3 +6,4 @@
 
 # Services
 from audit.service import audit_service
+from event.service import event_service

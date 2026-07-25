@@ -12,12 +12,12 @@ from models.event import LibraryEvent
 
 
 # =====================================================
-#          Event Cancellation Service
+#                   Event Cancellation
 # =====================================================
 
 # This class is responsible for handling 
 # the cancellation of participant registrations for events.
-class EventCancellationService:
+class EventCancellation:
 
     async def cancel(
         self,
