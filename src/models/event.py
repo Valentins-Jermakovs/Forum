@@ -108,6 +108,6 @@ class LibraryEvent(Document):
     )
 
 
-    # Settings class for the LibraryEvent model
+    # Collection name
     class Settings:
         name = "library_events"
