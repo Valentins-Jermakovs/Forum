@@ -20,6 +20,8 @@ class AuditAction(str, Enum):
     CREATE = "create"
     UPDATE = "update"
     DELETE = "delete"
+    REGISTER = "register"
+    CANCEL_REGISTRATION = "cancel_registration"
 
 
 

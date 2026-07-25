@@ -8,6 +8,12 @@ from .query import AuditQueryBuilder
 # Models
 from models import AuditLog
 
+# Schemas
+from schemas import (
+    AuditAction, 
+    AuditEntity,
+    AuditLogsResponse
+)
 
 # =====================================================
 #                     Audit Reader
@@ -30,8 +36,8 @@ class AuditReader:
         offset: int = 0,
         limit: int = 20,
         user_email: str | None = None,
-        action=None,
-        entity=None,
+        action: AuditAction | None = None,
+        entity: AuditEntity | None = None,
         success: bool | None = None,
         description: str | None = None
     ) -> dict:
@@ -71,10 +77,10 @@ class AuditReader:
         has_more = offset + limit < total
 
         # Return the logs along with pagination information.
-        return {
-            "items": logs,
-            "total": total,
-            "offset": offset,
-            "limit": limit,
-            "has_more": has_more
-        }
+        return AuditLogsResponse(
+            items=logs,
+            total=total,
+            offset=offset,
+            limit=limit,
+            has_more=has_more
+        )
