@@ -13,10 +13,18 @@ from .reader import EventReader
 from .participant_reader import ParticipantEventReader
 
 # Schemas
-from schemas import EventCreate, EventUpdate, ParticipantCreate
+from schemas import (
+    EventCreate, 
+    EventUpdate, 
+    ParticipantCreate
+)
 
 # Models:
-from models import LibraryEvent
+from models import (
+    LibraryEvent, 
+    EventCategory, 
+    EventStatus
+)
 
 
 
@@ -134,13 +142,25 @@ class EventService:
         self,
         offset: int = 0,
         limit: int = 20,
-        **filters
+        title: str | None = None,
+        library: str | None = None,
+        category: EventCategory | None = None,
+        status: EventStatus | None = None,
+        creator_id: int | None = None,
+        event_date: str | None = None,
+        participant_email: str | None = None
     ) -> dict:
 
         return await self._reader.get_events(
             offset=offset,
             limit=limit,
-            **filters
+            title=title,
+            library=library,
+            category=category,
+            status=status,
+            creator_id=creator_id,
+            event_date=event_date,
+            participant_email=participant_email
         )
 
 

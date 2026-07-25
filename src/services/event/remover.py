@@ -10,7 +10,7 @@ from models import (
 )
 
 # Classes:
-from .validator import EventPermissionValidator
+from .validator import event_permission_validator
 
 # Services:
 from services import audit_service
@@ -24,16 +24,6 @@ from services import audit_service
 # This class is responsible for removing events from the database.
 class EventRemover:
 
-    # Constructor - initializes the EventPermissionValidator 
-    # to check user permissions before deleting an event.
-    def __init__(
-        self
-    ):
-
-        self.permission = EventPermissionValidator()
-
-
-
     async def delete(
         self,
         event: LibraryEvent,
@@ -42,7 +32,7 @@ class EventRemover:
     ):
 
         # Check if the user is the owner of the event
-        await self.permission.check_owner(
+        await event_permission_validator.check_owner(
             event,
             user_id
         )
