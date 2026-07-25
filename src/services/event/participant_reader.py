@@ -8,6 +8,8 @@ from models.event import LibraryEvent
 # Classes:
 from .query import EventQueryBuilder
 
+# Schemas:
+from schemas import EventsResponse
 
 
 # =====================================================
@@ -31,7 +33,7 @@ class ParticipantEventReader:
         email: str,
         offset: int = 0,
         limit: int = 20
-    ) -> dict:
+    ) -> EventsResponse:
 
         # Query
         query = self.query_builder.build(
@@ -60,10 +62,10 @@ class ParticipantEventReader:
         # Check if there are more events to fetch
         has_more = offset + limit < total
 
-        return {
-            "items": events,
-            "total": total,
-            "offset": offset,
-            "limit": limit,
-            "has_more": has_more
-        }
+        return EventsResponse(
+            items=events,
+            total=total,
+            offset=offset,
+            limit=limit,
+            has_more=has_more
+        )

@@ -12,6 +12,9 @@ from models.event import (
 # Query
 from .query import EventQueryBuilder
 
+# Schemas:
+from schemas import EventsResponse
+
 
 
 # =====================================================
@@ -40,7 +43,7 @@ class EventReader:
         creator_id: int | None = None,
         event_date: str | None = None,
         participant_email: str | None = None
-    ) -> dict:
+    ) -> EventsResponse:
 
 
         # Query the database for events based on the provided filters,
@@ -80,10 +83,10 @@ class EventReader:
         # Return a dictionary containing the list of 
         # events, total count, offset, limit, and a 
         # boolean indicating if there are more events to fetch.
-        return {
-            "items": events,
-            "total": total,
-            "offset": offset,
-            "limit": limit,
-            "has_more": has_more
-        }
+        return EventsResponse(
+            items=events,
+            total=total,
+            offset=offset,
+            limit=limit,
+            has_more=has_more
+        )

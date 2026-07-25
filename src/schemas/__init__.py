@@ -13,7 +13,10 @@ from .event import (
     EventUpdate,
     RegisterParticipantRequest,
     EventResponse,
-    EventsResponse
+    EventsResponse,
+    EventStatisticsResponse,
+    UpcomingEventsResponse,
+    PopularEventsResponse
 )
 
 from .audit import (

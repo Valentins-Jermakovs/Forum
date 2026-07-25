@@ -11,12 +11,16 @@ from .remover import EventRemover
 from .finder import EventFinder
 from .reader import EventReader
 from .participant_reader import ParticipantEventReader
+from .statistics import EventStatistics
 
 # Schemas
 from schemas import (
     EventCreate, 
     EventUpdate, 
-    ParticipantCreate
+    ParticipantCreate,
+    UpcomingEventsResponse,
+    PopularEventsResponse,
+    EventsResponse
 )
 
 # Models:
@@ -49,6 +53,7 @@ class EventService:
         self._finder = EventFinder()
         self._reader = EventReader()
         self._participant_reader = ParticipantEventReader()
+        self._statistics = EventStatistics()
 
 
     # Create a new event with the provided data, user ID, and user email.
@@ -149,7 +154,7 @@ class EventService:
         creator_id: int | None = None,
         event_date: str | None = None,
         participant_email: str | None = None
-    ) -> dict:
+    ) -> EventsResponse:
 
         return await self._reader.get_events(
             offset=offset,
@@ -170,11 +175,35 @@ class EventService:
         email: str,
         offset: int = 0,
         limit: int = 20
-    ) -> dict:
+    ) -> EventsResponse:
 
         return await self._participant_reader.get_registered_events(
             email=email,
             offset=offset,
+            limit=limit
+        )
+
+
+    # Get a list of upcoming events that are scheduled 
+    # for today or later, limited by the specified number.
+    async def get_upcoming_events(
+        self,
+        limit: int = 10
+    ) -> UpcomingEventsResponse:
+
+        return await self._statistics.get_upcoming_events(
+            limit=limit
+        )
+
+    
+    # Get a list of popular events based on the number 
+    # of participants, limited by the specified number.
+    async def get_popular_events(
+        self,
+        limit: int = 10
+    ) -> PopularEventsResponse:
+
+        return await self._statistics.get_popular_events(
             limit=limit
         )
 

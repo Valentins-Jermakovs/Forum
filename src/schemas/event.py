@@ -203,7 +203,6 @@ class EventResponse(BaseModel):
     updated_at: datetime
 
 
-
 # =====================================================
 #                Pagination Response
 # =====================================================
@@ -216,3 +215,46 @@ class EventsResponse(BaseModel):
     offset: int
     limit: int
     has_more: bool
+
+
+
+# =====================================================
+#             Event Statistics Response
+# =====================================================
+
+
+# Short event representation for statistics
+class EventStatisticsResponse(BaseModel):
+
+    id: str
+
+    title: str
+    library: str
+    event_date: date
+    event_time: time
+    category: EventCategory
+    status: EventStatus
+    capacity: int
+    participants_count: int = 0
+
+
+
+# =====================================================
+#          Upcoming Events Response
+# =====================================================
+
+
+class UpcomingEventsResponse(BaseModel):
+
+    items: list[EventStatisticsResponse]
+
+
+
+# =====================================================
+#          Popular Events Response
+# =====================================================
+
+
+class PopularEventsResponse(BaseModel):
+
+    items: list[EventStatisticsResponse]
