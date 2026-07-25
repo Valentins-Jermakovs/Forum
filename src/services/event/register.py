@@ -15,14 +15,15 @@ from models import (
     AuditEntity
 )
 
-# Schemas
+# Schemas:
 from schemas.event import ParticipantCreate
 
 # Services:
 from services import audit_service
 
-# Classes
+# Classes:
 from .normalizer import event_normalizer
+
 
 
 # =====================================================
@@ -33,70 +34,103 @@ from .normalizer import event_normalizer
 # the registration of participants to events.
 class EventRegistration:
 
+
     async def register(
         self,
         event: LibraryEvent,
         participant: ParticipantCreate
     ) -> LibraryEvent:
 
-        participant = event_normalizer.normalize_participant(participant)
 
-        # Check event status
-        if event.status != EventStatus.ACTIVE:
+        try:
 
-            raise HTTPException(
-                status_code=400,
-                detail="Event is not available"
+            # Normalize participant data
+            participant = event_normalizer.normalize_participant(
+                participant
             )
 
 
-        # Check available seats
-        if len(event.participants) >= event.capacity:
-
-            raise HTTPException(
-                status_code=400,
-                detail="No available seats"
-            )
-
-
-        # Check duplicate registration
-        for user in event.participants:
-
-            if user.email == participant.email:
+            # Check event status
+            if event.status != EventStatus.ACTIVE:
 
                 raise HTTPException(
                     status_code=400,
-                    detail="User already registered"
+                    detail="Event is not available"
                 )
 
 
-        # Add participant
-        event.participants.append(
-            Participant(
-                **participant.model_dump()
+            # Check available seats
+            if len(event.participants) >= event.capacity:
+
+                raise HTTPException(
+                    status_code=400,
+                    detail="No available seats"
+                )
+
+
+            # Check duplicate registration
+            for user in event.participants:
+
+                if user.email == participant.email:
+
+                    raise HTTPException(
+                        status_code=400,
+                        detail="User already registered"
+                    )
+
+
+            # Add participant
+            event.participants.append(
+                Participant(
+                    **participant.model_dump()
+                )
             )
-        )
 
 
-        # Update timestamp
-        event.updated_at = datetime.now()
+            # Update timestamp
+            event.updated_at = datetime.now()
 
 
-        # Save changes
-        await event.save()
-
-        # Write audit log
-        await audit_service.create_log(
-            user_email=participant.email,
-            action=AuditAction.REGISTER,
-            entity=AuditEntity.EVENT,
-            description="Participant registered for event",
-            metadata={
-                "event_id": str(event.id),
-                "event_title": event.title,
-                "participant_name": participant.name
-            }
-        )
+            # Save changes
+            await event.save()
 
 
-        return event
+            # Success audit
+            await audit_service.create_log(
+                user_email=participant.email,
+                action=AuditAction.REGISTER,
+                entity=AuditEntity.EVENT,
+                description="Participant registered for event",
+                success=True,
+                metadata={
+                    "event_id": str(event.id),
+                    "event_title": event.title,
+                    "participant_name": participant.name
+                }
+            )
+
+
+            return event
+
+
+        except Exception as error:
+
+
+            # Failed audit
+            await audit_service.create_log(
+                user_email=participant.email,
+                action=AuditAction.REGISTER,
+                entity=AuditEntity.EVENT,
+                description="Failed to register participant for event",
+                success=False,
+                metadata={
+                    "event_id": str(event.id),
+                    "event_title": event.title,
+                    "participant_name": participant.name,
+                    "error": str(error),
+                    "error_type": type(error).__name__
+                }
+            )
+
+
+            raise

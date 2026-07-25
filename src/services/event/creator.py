@@ -36,37 +36,65 @@ class EventCreator:
         user_email: str
     ) -> LibraryEvent:
 
-        # Normalize the event data
-        data = event_normalizer.normalize_create(data)
+        try:
 
-        # Validate event uniqueness
-        await event_uniqueness_validator.check_title_unique(
-            title=data.title,
-            library=data.library
-        )
-
-        # Create a new LibraryEvent instance with the provided data, 
-        # user ID, and email.
-        event = LibraryEvent(
-            **data.model_dump(),
-            creator_id=user_id,
-            created_by=user_email
-        )
-
-        # Save the new event to the database
-        await event.insert()
-
-        # Write audit log
-        await audit_service.create_log(
-            user_email=user_email,
-            action=AuditAction.CREATE,
-            entity=AuditEntity.EVENT,
-            description="Created library event",
-            metadata={
-                "event_id": str(event.id),
-                "title": event.title
-            }
-        )
+            # Normalize data
+            data = event_normalizer.normalize_create(data)
 
 
-        return event
+            # Validate uniqueness
+            await event_uniqueness_validator.check_title_unique(
+                title=data.title,
+                library=data.library
+            )
+
+
+            # Create event
+            event = LibraryEvent(
+                **data.model_dump(),
+                creator_id=user_id,
+                created_by=user_email
+            )
+
+
+            # Save event
+            await event.insert()
+
+
+            # Success audit
+            await audit_service.create_log(
+                user_email=user_email,
+                action=AuditAction.CREATE,
+                entity=AuditEntity.EVENT,
+                description="Created library event",
+                success=True,
+                metadata={
+                    "event_id": str(event.id),
+                    "title": event.title
+                }
+            )
+
+
+            return event
+
+
+        except Exception as error:
+
+
+            # Failed audit
+            await audit_service.create_log(
+                user_email=user_email,
+                action=AuditAction.CREATE,
+                entity=AuditEntity.EVENT,
+                description="Failed to create library event",
+                success=False,
+                metadata={
+                    "title": data.title,
+                    "library": data.library,
+                    "error": str(error)
+                }
+            )
+
+
+            # Return original error
+            raise

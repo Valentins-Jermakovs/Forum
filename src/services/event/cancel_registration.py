@@ -17,6 +17,7 @@ from models import (
 from services import audit_service
 
 
+
 # =====================================================
 #                   Event Cancellation
 # =====================================================
@@ -24,6 +25,7 @@ from services import audit_service
 # This class is responsible for handling 
 # the cancellation of participant registrations for events.
 class EventCancellation:
+
 
     async def cancel(
         self,
@@ -35,50 +37,82 @@ class EventCancellation:
         participant = None
 
 
-        # Find participant
-        for user in event.participants:
+        try:
 
-            if user.email == email:
+            # Find participant
+            for user in event.participants:
 
-                participant = user
-                break
+                if user.email == email:
+
+                    participant = user
+                    break
 
 
 
-        # Participant not found
-        if not participant:
+            # Participant not found
+            if not participant:
 
-            raise HTTPException(
-                status_code=404,
-                detail="Registration not found"
+                raise HTTPException(
+                    status_code=404,
+                    detail="Registration not found"
+                )
+
+
+
+            # Remove participant
+            event.participants.remove(
+                participant
             )
 
 
 
-        # Remove participant
-        event.participants.remove(
-            participant
-        )
+            # Update timestamp
+            event.updated_at = datetime.now()
 
 
-        # Update timestamp
-        event.updated_at = datetime.now()
+
+            # Save changes
+            await event.save()
 
 
-        # Save
-        await event.save()
 
-        # Write audit log
-        await audit_service.create_log(
-            user_email=participant.email,
-            action=AuditAction.CANCEL_REGISTRATION,
-            entity=AuditEntity.EVENT,
-            description="Cancelled participant registration",
-            metadata={
-                "event_id": str(event.id),
-                "event_title": event.title,
-                "participant_name": participant.name
-            }
-        )
+            # Success audit
+            await audit_service.create_log(
+                user_email=participant.email,
+                action=AuditAction.CANCEL_REGISTRATION,
+                entity=AuditEntity.EVENT,
+                description="Cancelled participant registration",
+                success=True,
+                metadata={
+                    "event_id": str(event.id),
+                    "event_title": event.title,
+                    "participant_name": participant.name
+                }
+            )
 
-        return event
+
+            return event
+
+
+
+        except Exception as error:
+
+
+            # Failed audit
+            await audit_service.create_log(
+                user_email=email,
+                action=AuditAction.CANCEL_REGISTRATION,
+                entity=AuditEntity.EVENT,
+                description="Failed to cancel participant registration",
+                success=False,
+                metadata={
+                    "event_id": str(event.id),
+                    "event_title": event.title,
+                    "participant_email": email,
+                    "error": str(error),
+                    "error_type": type(error).__name__
+                }
+            )
+
+
+            raise
