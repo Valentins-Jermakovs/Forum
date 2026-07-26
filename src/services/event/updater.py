@@ -18,7 +18,8 @@ from schemas.event import EventUpdate
 # Classes:
 from .validator import (
     event_permission_validator,
-    event_uniqueness_validator
+    event_uniqueness_validator,
+    event_capacity_validator
 )
 from .normalizer import event_normalizer
 
@@ -83,6 +84,13 @@ class EventUpdater:
             # Get only provided fields
             update_data = data.model_dump(
                 exclude_none=True
+            )
+
+
+            # Validate new capacity
+            await event_capacity_validator.check_capacity(
+                event=event,
+                new_capacity=update_data.get("capacity")
             )
 
 

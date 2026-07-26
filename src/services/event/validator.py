@@ -85,7 +85,45 @@ class EventUniquenessValidator:
         )
 
 
+# =====================================================
+#              Event Capacity Validator
+# =====================================================
 
+# This class is response for checking capacity before
+# update the event
+class EventCapacityValidator:
+
+    async def check_capacity(
+        self,
+        event: LibraryEvent,
+        new_capacity: int | None
+    ) -> None:
+
+
+        # No capacity update
+        if new_capacity is None:
+            return
+
+
+        # Count registered participants
+        registered_count = len(
+            event.participants
+        )
+
+
+        # New capacity cannot be lower than current registrations
+        if new_capacity < registered_count:
+
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    "Capacity cannot be lower than "
+                    f"current registered participants ({registered_count})"
+                )
+            )
+
+        
 # Create instance of the validator classes for use in other parts of the application.
 event_permission_validator = EventPermissionValidator()
 event_uniqueness_validator = EventUniquenessValidator()
+event_capacity_validator = EventCapacityValidator()
