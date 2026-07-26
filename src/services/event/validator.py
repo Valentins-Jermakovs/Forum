@@ -23,8 +23,13 @@ class EventPermissionValidator:
     async def check_owner(
         self,
         event: LibraryEvent,
-        user_id: int
+        user_id: int,
+        roles: list[str]
     ) -> bool:
+
+        if "admin" in roles:
+
+            return True
 
         # Check user permission to modify the event
         if event.creator_id != user_id:

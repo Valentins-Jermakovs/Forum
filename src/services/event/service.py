@@ -77,14 +77,16 @@ class EventService:
         event: LibraryEvent,
         data: EventUpdate,
         user_id: int,
-        user_email: str
+        user_email: str,
+        user_roles: list[str]
     ) -> LibraryEvent:
 
         return await self._updater.update(
             event=event,
             data=data,
             user_id=user_id,
-            user_email=user_email
+            user_email=user_email,
+            user_roles=user_roles
         )
 
 
@@ -93,13 +95,15 @@ class EventService:
         self,
         event: LibraryEvent,
         user_id: int,
-        user_email: str
+        user_email: str,
+        user_roles: list[str]
     ) -> dict:
 
         return await self._remover.delete(
             event=event,
             user_id=user_id,
-            user_email=user_email
+            user_email=user_email,
+            user_roles=user_roles
         )
 
 

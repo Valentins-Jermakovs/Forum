@@ -90,6 +90,7 @@ async def update_event(
     # Get user_id and user_email
     user_id = jwt_payload.get_user_id(payload)
     user_email = jwt_payload.get_user_email(payload)
+    user_roles = jwt_payload.get_roles(payload)
 
     # Find event by id
     event = await event_service.find_by_id(
@@ -102,7 +103,8 @@ async def update_event(
         event=event,
         data=data,
         user_id=user_id,
-        user_email=user_email
+        user_email=user_email,
+        user_roles=user_roles
     )
 
     return updated_event
@@ -128,6 +130,7 @@ async def delete_event(
     # Get user_id and user_email
     user_id = jwt_payload.get_user_id(payload)
     user_email = jwt_payload.get_user_email(payload)
+    user_roles = jwt_payload.get_roles(payload)
 
     # Find event by id
     event = await event_service.find_by_id(
@@ -139,7 +142,8 @@ async def delete_event(
     deleted_event_response = await event_service.delete(
         event=event,
         user_id=user_id,
-        user_email=user_email
+        user_email=user_email,
+        user_roles=user_roles
     )
 
     return deleted_event_response

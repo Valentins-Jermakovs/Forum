@@ -41,7 +41,8 @@ class EventUpdater:
         event: LibraryEvent,
         data: EventUpdate,
         user_id: int,
-        user_email: str
+        user_email: str,
+        user_roles: list[str]
     ) -> LibraryEvent:
 
 
@@ -67,7 +68,8 @@ class EventUpdater:
             # Check owner permission
             await event_permission_validator.check_owner(
                 event,
-                user_id
+                user_id,
+                user_roles
             )
 
 

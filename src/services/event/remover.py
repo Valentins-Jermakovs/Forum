@@ -29,7 +29,8 @@ class EventRemover:
         self,
         event: LibraryEvent,
         user_id: int,
-        user_email: str
+        user_email: str,
+        user_roles: list[str]
     ):
 
 
@@ -38,7 +39,8 @@ class EventRemover:
             # Check if the user is the owner of the event
             await event_permission_validator.check_owner(
                 event,
-                user_id
+                user_id,
+                user_roles
             )
 
 
