@@ -41,10 +41,11 @@ class JWTPayload:
     def get_user_id(
         self,
         payload: dict
-    ) -> str:
+    ) -> int:
 
         # Get the user id from the payload
         user_id = payload.get("sub")
+        user_id = int(user_id) if user_id else None
 
         # Raise an HTTPException if the user id
         # is not found in the payload

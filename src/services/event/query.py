@@ -2,6 +2,9 @@
 #                   Event Query Builder
 # =====================================================
 
+# Libraries:
+from datetime import datetime
+
 # Models:
 from models.event import (
     EventCategory,
@@ -71,9 +74,12 @@ class EventQueryBuilder:
         # Event date
         if event_date:
 
-            query["event_date"] = event_date
+            query["event_date"] = datetime.strptime(
+                event_date,
+                "%Y-%m-%d"
+            )
 
-        # Participiant email
+        # Participant email
         if participant_email:
 
             query["participants.email"] = participant_email

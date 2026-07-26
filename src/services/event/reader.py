@@ -13,7 +13,10 @@ from models.event import (
 from .query import EventQueryBuilder
 
 # Schemas:
-from schemas import EventsResponse
+from schemas import (
+    EventsResponse,
+    EventResponse
+)
 
 
 
@@ -84,7 +87,27 @@ class EventReader:
         # events, total count, offset, limit, and a 
         # boolean indicating if there are more events to fetch.
         return EventsResponse(
-            items=events,
+            items=[
+                EventResponse(
+                    id=str(event.id),
+                    title=event.title,
+                    description=event.description,
+                    library=event.library,
+                    place=event.place,
+                    tags=event.tags,
+                    event_date=event.event_date,
+                    event_time=event.event_time,
+                    duration=event.duration,
+                    capacity=event.capacity,
+                    participants=event.participants,
+                    category=event.category,
+                    status=event.status,
+                    created_by=event.created_by,
+                    created_at=event.created_at,
+                    updated_at=event.updated_at
+                )
+                for event in events
+            ],
             total=total,
             offset=offset,
             limit=limit,
