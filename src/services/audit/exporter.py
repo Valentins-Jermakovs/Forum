@@ -100,11 +100,4 @@ class AuditExporter:
         buffer.seek(0)
 
 
-        return StreamingResponse(
-            buffer,
-            media_type="text/csv; charset=utf-8",
-            headers={
-                "Content-Disposition":
-                "attachment; filename=audit_logs.csv"
-            }
-        )
+        return buffer

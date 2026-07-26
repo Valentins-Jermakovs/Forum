@@ -12,7 +12,8 @@ from models import AuditLog
 from schemas import (
     AuditAction, 
     AuditEntity,
-    AuditLogsResponse
+    AuditLogsResponse,
+    AuditLogResponse
 )
 
 # =====================================================
@@ -78,7 +79,19 @@ class AuditReader:
 
         # Return the logs along with pagination information.
         return AuditLogsResponse(
-            items=logs,
+            items=[
+                AuditLogResponse(
+                    id=str(log.id),
+                    user_email=log.user_email,
+                    action=log.action,
+                    entity=log.entity,
+                    description=log.description,
+                    success=log.success,
+                    metadata=log.metadata,
+                    created_at=log.created_at
+                )
+                for log in logs
+            ],
             total=total,
             offset=offset,
             limit=limit,
