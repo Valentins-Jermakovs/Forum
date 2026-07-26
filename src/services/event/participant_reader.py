@@ -9,7 +9,11 @@ from models.event import LibraryEvent
 from .query import EventQueryBuilder
 
 # Schemas:
-from schemas import EventsResponse
+# Schemas:
+from schemas import (
+    EventsResponse,
+    EventResponse
+)
 
 
 # =====================================================
@@ -63,7 +67,27 @@ class ParticipantEventReader:
         has_more = offset + limit < total
 
         return EventsResponse(
-            items=events,
+            items=[
+                EventResponse(
+                    id=str(event.id),
+                    title=event.title,
+                    description=event.description,
+                    library=event.library,
+                    place=event.place,
+                    tags=event.tags,
+                    event_date=event.event_date,
+                    event_time=event.event_time,
+                    duration=event.duration,
+                    capacity=event.capacity,
+                    participants=event.participants,
+                    category=event.category,
+                    status=event.status,
+                    created_by=event.created_by,
+                    created_at=event.created_at,
+                    updated_at=event.updated_at
+                )
+                for event in events
+            ],
             total=total,
             offset=offset,
             limit=limit,
