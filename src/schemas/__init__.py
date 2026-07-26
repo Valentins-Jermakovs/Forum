@@ -25,3 +25,7 @@ from .audit import (
     AuditLogResponse,
     AuditLogsResponse
 )
+
+from .metrics import (
+    SystemMetricsResponse
+)

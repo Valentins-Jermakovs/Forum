@@ -24,6 +24,7 @@ lazy-model==0.4.0
 markdown-it-py==4.2.0
 MarkupSafe==3.0.3
 mdurl==0.1.2
+psutil==7.2.2
 pyasn1==0.6.4
 pycparser==3.0
 pydantic==2.13.4

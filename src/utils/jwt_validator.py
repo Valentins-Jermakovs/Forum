@@ -6,9 +6,21 @@
 from jose import jwt, JWTError, ExpiredSignatureError
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+import os
+from dotenv import load_dotenv
 
-# Config:
-from config import SECRET_KEY, ALGORITHM
+
+
+# ====================================================
+#                       .env
+# ====================================================
+
+# Load environment variables
+load_dotenv()
+
+# Secret key and algorithm for JWT validation
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM")
 
 
 

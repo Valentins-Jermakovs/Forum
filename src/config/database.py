@@ -28,8 +28,8 @@ load_dotenv()
 async def init_db():
 
     # Connect to database
-    client = AsyncMongoClient(os.getenv("MONGO_URL"))
-    db = client[os.getenv("DB_NAME")]
+    client = AsyncMongoClient(os.getenv("DATABASE_URL"))
+    db = client[os.getenv("DATABASE_NAME")]
 
     await init_beanie(
         database=db, 

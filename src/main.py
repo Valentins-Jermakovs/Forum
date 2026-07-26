@@ -9,6 +9,9 @@ from contextlib import asynccontextmanager
 # Config:
 from config.database import init_db
 
+# Routes
+from api import main_router
+
 
 
 # =====================================================
@@ -32,3 +35,6 @@ async def lifespan(app: FastAPI):
 
 # Create FastAPI app with custom lifespan logic
 app = FastAPI(lifespan=lifespan)
+
+# Router object for all API routes
+app.include_router(main_router)
