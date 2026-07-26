@@ -7,6 +7,7 @@ from fastapi import APIRouter
 
 # Routes:
 from .metrics_router import router as metrics_router
+from .events_router import router as events_router
 
 
 
@@ -20,3 +21,4 @@ main_router = APIRouter()
 # =====================================================
 
 main_router.include_router(metrics_router)
+main_router.include_router(events_router)

@@ -18,6 +18,7 @@ class JWTPayload:
 
     # Method to get the user email from the JWT payload
     def get_user_email(
+        self,
         payload: dict
     ) -> str:
 
@@ -38,6 +39,7 @@ class JWTPayload:
 
     # Method to get the user id from the JWT payload
     def get_user_id(
+        self,
         payload: dict
     ) -> str:
 
@@ -58,6 +60,7 @@ class JWTPayload:
 
     # Get the user roles from the JWT payload
     def get_roles(
+        self,
         payload: dict
     ) -> list[str]:
 
@@ -73,6 +76,7 @@ class JWTPayload:
     #   - email, 
     #   - roles
     def get_user(
+        self,
         payload: dict
     ) -> dict:
 

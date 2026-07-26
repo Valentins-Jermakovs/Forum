@@ -10,7 +10,7 @@ from fastapi import APIRouter, Depends
 from schemas import SystemMetricsResponse
 
 # Utils
-from utils.jwt_validator import jwt_validator
+from utils import jwt_validator
 
 
 

@@ -4,7 +4,8 @@
 
 # Libraries:
 from pydantic import BaseModel, Field, EmailStr, ConfigDict
-from datetime import date, time, datetime
+from datetime import date, datetime
+from beanie import PydanticObjectId
 from enum import Enum
 
 
@@ -93,7 +94,7 @@ class EventCreate(BaseModel):
     )
 
     event_date: date
-    event_time: time
+    event_time: str
 
     duration: str = Field(
         min_length=1,
@@ -144,7 +145,7 @@ class EventUpdate(BaseModel):
 
     tags: list[str] | None = None
     event_date: date | None = None
-    event_time: time | None = None
+    event_time: str | None = None
 
 
     duration: str | None = Field(
@@ -180,7 +181,7 @@ class RegisterParticipantRequest(BaseModel):
 
 class EventResponse(BaseModel):
 
-    id: str
+    id: PydanticObjectId
 
     title: str
     description: str
@@ -189,7 +190,7 @@ class EventResponse(BaseModel):
     tags: list[str]
 
     event_date: date
-    event_time: time
+    event_time: str
     duration: str
 
     capacity: int
@@ -226,12 +227,12 @@ class EventsResponse(BaseModel):
 # Short event representation for statistics
 class EventStatisticsResponse(BaseModel):
 
-    id: str
+    id: PydanticObjectId
 
     title: str
     library: str
     event_date: date
-    event_time: time
+    event_time: str
     category: EventCategory
     status: EventStatus
     capacity: int
