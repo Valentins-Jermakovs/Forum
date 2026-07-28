@@ -35,7 +35,6 @@ class EventReader:
         self.query_builder = EventQueryBuilder()
 
 
-
     async def get_events(
         self,
         offset: int = 0,
@@ -49,7 +48,6 @@ class EventReader:
         participant_email: str | None = None
     ) -> EventsResponse:
 
-
         # Query the database for events based on the provided filters,
         query = self.query_builder.build(
             title=title,
@@ -60,6 +58,7 @@ class EventReader:
             event_date=event_date,
             participant_email=participant_email
         )
+
 
         # List of events and total count of events matching the query
         events = await (
@@ -81,8 +80,10 @@ class EventReader:
             .count()
         )
 
+
         # Check if there are more events to fetch based on the offset and limit
         has_more = offset + limit < total
+
 
         # Return a dictionary containing the list of 
         # events, total count, offset, limit, and a 

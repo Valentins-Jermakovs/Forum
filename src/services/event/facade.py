@@ -64,6 +64,7 @@ class EventService:
         user_email: str
     ) -> LibraryEvent:
 
+
         return await self._creator.create(
             data=data,
             user_id=user_id,
@@ -80,6 +81,7 @@ class EventService:
         user_email: str,
         user_roles: list[str]
     ) -> LibraryEvent:
+
 
         return await self._updater.update(
             event=event,
@@ -99,6 +101,7 @@ class EventService:
         user_roles: list[str]
     ) -> dict:
 
+
         return await self._remover.delete(
             event=event,
             user_id=user_id,
@@ -116,6 +119,7 @@ class EventService:
         email: str
     ) -> LibraryEvent:
 
+
         return await self._registration.register(
             event=event,
             participant=participant,
@@ -131,6 +135,7 @@ class EventService:
         email: str
     ) -> LibraryEvent:
 
+
         return await self._cancellation.cancel(
             event=event,
             email=email
@@ -142,6 +147,7 @@ class EventService:
         self,
         event_id: str
     ) -> LibraryEvent:
+
 
         return await self._finder.get_by_id(
             event_id=event_id
@@ -161,6 +167,7 @@ class EventService:
         event_date: str | None = None,
         participant_email: str | None = None
     ) -> EventsResponse:
+
 
         return await self._reader.get_events(
             offset=offset,
@@ -183,6 +190,7 @@ class EventService:
         limit: int = 20
     ) -> EventsResponse:
 
+
         return await self._participant_reader.get_registered_events(
             email=email,
             offset=offset,
@@ -197,6 +205,7 @@ class EventService:
         limit: int = 10
     ) -> UpcomingEventsResponse:
 
+
         return await self._statistics.get_upcoming_events(
             limit=limit
         )
@@ -208,6 +217,7 @@ class EventService:
         self,
         limit: int = 10
     ) -> PopularEventsResponse:
+
 
         return await self._statistics.get_popular_events(
             limit=limit

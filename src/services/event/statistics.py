@@ -54,6 +54,7 @@ class EventStatistics:
             .to_list()
         )
 
+
         return UpcomingEventsResponse(
             items=[
                 EventStatisticsResponse(
@@ -101,6 +102,7 @@ class EventStatistics:
                 "$limit": limit
             }
         ]
+
 
         # Execute the aggregation pipeline and return the results.
         events = await LibraryEvent.aggregate(

@@ -52,7 +52,6 @@ class EventPermissionValidator:
 # of event titles within a specific library.
 class EventUniquenessValidator:
 
-
     async def check_title_unique(
         self,
         title: str,
@@ -90,6 +89,7 @@ class EventUniquenessValidator:
         )
 
 
+
 # =====================================================
 #              Event Capacity Validator
 # =====================================================
@@ -103,7 +103,6 @@ class EventCapacityValidator:
         event: LibraryEvent,
         new_capacity: int | None
     ) -> None:
-
 
         # No capacity update
         if new_capacity is None:

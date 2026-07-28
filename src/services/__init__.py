@@ -6,4 +6,4 @@
 
 # Services
 from .audit.facade import audit_service
-from .event.service import event_service
+from .event.facade import event_service

@@ -2,17 +2,20 @@
 #                   Event Query Builder
 # =====================================================
 
-# Libraries:
-from datetime import datetime
-
 # Models:
 from models.event import (
     EventCategory,
     EventStatus
 )
 
-# Classes:
-from .normalizer import event_normalizer
+# Utils:
+from utils import (
+    string_normalizer,
+    email_normalizer,
+    date_normalizer
+)
+
+
 
 # =====================================================
 #                Event Query Builder
@@ -34,37 +37,60 @@ class EventQueryBuilder:
         participant_email: str | None = None
     ) -> dict:
 
+
         # Query
         query = {}
+
+
+
+        # --------------------------------------
+        #              Normalization
+        # --------------------------------------
+
+        # Normalize title
+        if title:
+
+            title = string_normalizer.normalize(
+                title
+            )
+
+
+        # Normalize library
+        if library:
+
+            library = string_normalizer.normalize(
+                library
+            )
+
+
+        # Normalize creator email
+        if creator_email:
+
+            creator_email = email_normalizer.normalize(
+                creator_email
+            )
+
+
+        # Normalize participant email
+        if participant_email:
+
+            participant_email = email_normalizer.normalize(
+                participant_email
+            )
+
+
+        # Normalize event date
+        if event_date:
+
+            event_date = date_normalizer.normalize(
+                event_date
+            )
+
 
 
         # --------------------------------------
         #               Filters
         # --------------------------------------
-
-        # Normalize strings
-        if title:
-            title = event_normalizer.normalize_string(
-                title
-            )
-
-
-        if library:
-            library = event_normalizer.normalize_string(
-                library
-            )
-
-
-        if creator_email:
-            creator_email = event_normalizer.normalize_email(
-                creator_email
-            )
-
-
-        if participant_email:
-            participant_email = event_normalizer.normalize_email(
-                participant_email
-            )
 
         # Title
         if title:
@@ -74,6 +100,7 @@ class EventQueryBuilder:
                 "$options": "i"
             }
 
+
         # Library
         if library:
 
@@ -82,40 +109,36 @@ class EventQueryBuilder:
                 "$options": "i"
             }
 
+
         # Category
         if category:
 
             query["category"] = category
+
 
         # Status
         if status:
 
             query["status"] = status
 
-        # Creator ID
+
+        # Creator email
         if creator_email:
 
-            query["created_by"] = {
-                "$regex": creator_email,
-                "$options": "i"
-            }
+            query["created_by"] = creator_email
+
 
         # Event date
         if event_date:
 
-            event_date = event_normalizer.normalize_date(
-                event_date
-            )
-
             query["event_date"] = event_date
+
 
         # Participant email
         if participant_email:
 
-            query["participants.email"] = {
-                "$regex": participant_email,
-                "$options": "i"
-            }
+            query["participants.email"] = participant_email
+
 
 
         return query

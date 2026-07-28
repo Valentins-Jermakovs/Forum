@@ -26,27 +26,24 @@ from services import audit_service
 # the cancellation of participant registrations for events.
 class EventCancellation:
 
-
     async def cancel(
         self,
         event: LibraryEvent,
         email: str
     ) -> LibraryEvent:
 
-
+        # Store participant
         participant = None
 
 
+        # Try to cance registration,
+        # if failed, write error log
         try:
-
             # Find participant
             for user in event.participants:
-
                 if user.email == email:
-
                     participant = user
                     break
-
 
 
             # Participant not found
@@ -58,22 +55,18 @@ class EventCancellation:
                 )
 
 
-
             # Remove participant
             event.participants.remove(
                 participant
             )
 
 
-
             # Update timestamp
             event.updated_at = datetime.now()
 
 
-
             # Save changes
             await event.save()
-
 
 
             # Success audit
@@ -94,7 +87,7 @@ class EventCancellation:
             return event
 
 
-
+        # Error handling
         except Exception as error:
 
 

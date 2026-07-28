@@ -32,7 +32,6 @@ class ParticipantEventReader:
         self.query_builder = EventQueryBuilder()
 
 
-
     async def get_registered_events(
         self,
         email: str,
@@ -44,6 +43,7 @@ class ParticipantEventReader:
         query = self.query_builder.build(
             participant_email=email
         )
+
 
         # List of events
         events = await (
@@ -57,6 +57,7 @@ class ParticipantEventReader:
             .to_list()
         )
 
+
         # Count total events for pagination
         total = await (
             LibraryEvent
@@ -64,8 +65,10 @@ class ParticipantEventReader:
             .count()
         )
 
+
         # Check if there are more events to fetch
         has_more = offset + limit < total
+
 
         return EventsResponse(
             items=[

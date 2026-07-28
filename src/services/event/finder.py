@@ -29,6 +29,7 @@ class EventFinder:
             event_id
         )
 
+
         # If the event is not found, raise a 404 HTTPException
         if not event:
 

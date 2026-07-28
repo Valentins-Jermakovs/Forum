@@ -2,15 +2,17 @@
 #                        Imports
 # =====================================================
 
-# Libraries:
-from datetime import datetime
-from fastapi import HTTPException
-
 # Schemas:
 from schemas.event import (
     EventCreate,
     EventUpdate,
     ParticipantCreate
+)
+
+# Utils:
+from utils import (
+    string_normalizer,
+    email_normalizer
 )
 
 
@@ -19,48 +21,8 @@ from schemas.event import (
 #                  Event Normalizer
 # =====================================================
 
+# This class normalize input data
 class EventNormalizer:
-
-
-    # Normalize simple string values
-    def normalize_string(
-        self,
-        string: str
-    ) -> str:
-
-        return string.strip().lower()
-
-
-    # Normalize date values
-    def normalize_date(
-        self,
-        date: str
-    ) -> datetime:
-
-        try:
-
-            return datetime.strptime(
-                date.strip(),
-                "%Y-%m-%d"
-            )
-
-        except ValueError:
-
-            raise HTTPException(
-                status_code=400,
-                detail="Invalid event date format. Use YYYY-MM-DD"
-            )
-
-
-    # Normalize email values
-    def normalize_email(
-        self,
-        email: str
-    ) -> str:
-
-        return email.strip().lower()
-
-
 
     # Normalize event creation data
     def normalize_create(
@@ -68,30 +30,39 @@ class EventNormalizer:
         data: EventCreate
     ) -> EventCreate:
 
-
-        data.title = self.normalize_string(
+        # Normalize title
+        data.title = string_normalizer.normalize(
             data.title
         )
 
-        data.description = self.normalize_string(
+
+        # Normalize description
+        data.description = string_normalizer.normalize(
             data.description
         )
 
-        data.library = self.normalize_string(
+
+        # Normalize library
+        data.library = string_normalizer.normalize(
             data.library
         )
 
-        data.place = self.normalize_string(
+
+        # Normalize place
+        data.place = string_normalizer.normalize(
             data.place
         )
 
-        data.duration = self.normalize_string(
+
+        # Normalize duration
+        data.duration = string_normalizer.normalize(
             data.duration
         )
 
 
+        # Normalize tags
         data.tags = [
-            self.normalize_string(tag)
+            string_normalizer.normalize(tag)
             for tag in data.tags
         ]
 
@@ -106,46 +77,51 @@ class EventNormalizer:
         data: EventUpdate
     ) -> EventUpdate:
 
-
+        # Normalize title
         if data.title is not None:
 
-            data.title = self.normalize_string(
+            data.title = string_normalizer.normalize(
                 data.title
             )
 
 
+        # Normalize description
         if data.description is not None:
 
-            data.description = self.normalize_string(
+            data.description = string_normalizer.normalize(
                 data.description
             )
 
 
+        # Normalize library
         if data.library is not None:
 
-            data.library = self.normalize_string(
+            data.library = string_normalizer.normalize(
                 data.library
             )
 
 
+        # Normalize place
         if data.place is not None:
 
-            data.place = self.normalize_string(
+            data.place = string_normalizer.normalize(
                 data.place
             )
 
 
+        # Normalize duration
         if data.duration is not None:
 
-            data.duration = self.normalize_string(
+            data.duration = string_normalizer.normalize(
                 data.duration
             )
 
 
+        # Normalize tags
         if data.tags is not None:
 
             data.tags = [
-                self.normalize_string(tag)
+                string_normalizer.normalize(tag)
                 for tag in data.tags
             ]
 
@@ -160,17 +136,19 @@ class EventNormalizer:
         participant: ParticipantCreate
     ) -> ParticipantCreate:
 
-
-        participant.name = self.normalize_string(
+        # Normalize name
+        participant.name = string_normalizer.normalize(
             participant.name
         )
 
 
-        participant.email = self.normalize_email(
+        # Normalize email
+        participant.email = email_normalizer.normalize(
             participant.email
         )
 
 
+        # Normalize phone
         participant.phone = (
             participant.phone.strip()
         )
