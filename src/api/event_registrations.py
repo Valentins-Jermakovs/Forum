@@ -3,7 +3,10 @@
 # =====================================================
 
 # Libraries:
-from fastapi import APIRouter, Depends
+from fastapi import (
+    APIRouter, 
+    Depends
+)
 
 # Schemas
 from schemas import (
@@ -23,7 +26,10 @@ from services import event_service
 
 
 
-# Router object
+# =====================================================
+#                       Router
+# =====================================================
+
 router = APIRouter(
     prefix="/events/{event_id}/registrations",
     tags=["Event Registrations services - response of users registrations to events"],
@@ -47,15 +53,17 @@ async def register_user_to_event(
     payload = Depends(jwt_validator.validate_token),
 ) -> EventResponse:
 
-
     # Find event by id
     event = await event_service.find_by_id(
         event_id
     )
 
+
+    # Extract email from token
     email = jwt_payload.get_user_email(
         payload
     )
+
 
     # Register the participant to the event
     registered_event = await event_service.register(
@@ -83,16 +91,19 @@ async def cancel_user_registration_to_event(
         event_id
     )
 
+
     # Get user email from JWT payload
     email = jwt_payload.get_user_email(
         payload
     )
+
 
     # Cancel the participant's registration to the event
     canceled_event = await event_service.cancel_registration(
         event=event,
         email=email
     )
+
 
     return canceled_event
 
@@ -114,11 +125,13 @@ async def get_user_registered_events(
         payload
     )
 
+
     # Get events where the user is registered as a participant
     user_events = await event_service.get_user_events(
         offset=offset,
         limit=limit,
         email=email
     )
+
 
     return user_events

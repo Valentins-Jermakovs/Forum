@@ -3,7 +3,10 @@
 # =====================================================
 
 # Libraries:
-from fastapi import APIRouter, Depends
+from fastapi import (
+    APIRouter, 
+    Depends
+)
 
 # Schemas
 from schemas import (
@@ -26,7 +29,10 @@ from services import event_service
 
 
 
-# Router object
+# =====================================================
+#                       Router
+# =====================================================
+
 router = APIRouter(
     prefix="/events",
     tags=["Events services - create, read, update, delete events"],
@@ -55,9 +61,11 @@ async def create_event(
         payload=payload
     )
 
+
     # Get user_id and user_email
     user_id = jwt_payload.get_user_id(payload)
     user_email = jwt_payload.get_user_email(payload)
+
 
     # Create the event using the service
     created_event = await event_service.create(
@@ -65,6 +73,7 @@ async def create_event(
         user_id=user_id,
         user_email=user_email
     )
+
 
     return created_event
 
@@ -87,10 +96,12 @@ async def update_event(
         payload=payload
     )
 
+
     # Get user_id and user_email
     user_id = jwt_payload.get_user_id(payload)
     user_email = jwt_payload.get_user_email(payload)
     user_roles = jwt_payload.get_roles(payload)
+
 
     # Find event by id
     event = await event_service.find_by_id(
@@ -106,6 +117,7 @@ async def update_event(
         user_email=user_email,
         user_roles=user_roles
     )
+
 
     return updated_event
 
@@ -127,10 +139,12 @@ async def delete_event(
         payload=payload
     )
 
+
     # Get user_id and user_email
     user_id = jwt_payload.get_user_id(payload)
     user_email = jwt_payload.get_user_email(payload)
     user_roles = jwt_payload.get_roles(payload)
+
 
     # Find event by id
     event = await event_service.find_by_id(
@@ -145,6 +159,7 @@ async def delete_event(
         user_email=user_email,
         user_roles=user_roles
     )
+
 
     return deleted_event_response
 
@@ -181,6 +196,7 @@ async def search_events(
         participant_email=participant_email
     )
 
+
     return events_response
 
 
@@ -199,6 +215,7 @@ async def get_event_by_id(
     event = await event_service.find_by_id(
         event_id
     )
+
 
     return event
 

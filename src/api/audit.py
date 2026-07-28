@@ -3,7 +3,10 @@
 # =====================================================
 
 # Libraries:
-from fastapi import APIRouter, Depends
+from fastapi import (
+    APIRouter, 
+    Depends
+)
 from fastapi.responses import StreamingResponse
 
 # Schemas
@@ -21,7 +24,10 @@ from services import audit_service
 
 
 
-# Router object
+# =====================================================
+#                       Router
+# =====================================================
+
 router = APIRouter(
     prefix="/audit",
     tags=["Audit services - logs and exports"],
@@ -32,7 +38,6 @@ router = APIRouter(
 # =====================================================
 #                       Endpoints
 # =====================================================
-
 
 # Get audit logs
 @router.get(
@@ -51,12 +56,12 @@ async def get_audit_logs(
     payload = Depends(jwt_validator.validate_token)
 ) -> AuditLogsResponse:
 
-
     # Admin access only
     await jwt_validator.require_roles(
         roles=["admin"],
         payload=payload
     )
+
 
     # Get logs
     logs = await audit_service.get_logs(
@@ -87,12 +92,12 @@ async def export_audit_logs(
     payload = Depends(jwt_validator.validate_token)
 ):
 
-
     # Admin access only
     await jwt_validator.require_roles(
         roles=["admin"],
         payload=payload
     )
+
 
     # Create file
     csv_file = await audit_service.export_csv(
@@ -102,6 +107,7 @@ async def export_audit_logs(
         success=success,
         description=description
     )
+
 
     # Return it
     return StreamingResponse(

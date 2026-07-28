@@ -3,7 +3,10 @@
 # =====================================================
 
 # Libraries:
-from fastapi import APIRouter, Depends
+from fastapi import (
+    APIRouter, 
+    Depends
+)
 
 # Schemas
 from schemas import (
@@ -18,7 +21,11 @@ from utils import jwt_validator
 from services import event_service
 
 
-# Router object
+
+# =====================================================
+#                       Router
+# =====================================================
+
 router = APIRouter(
     prefix="/events/statistics",
     tags=["Event Statistics"]
@@ -40,6 +47,7 @@ async def get_upcoming_events(
     limit: int = 10,
     payload = Depends(jwt_validator.validate_token)
 ):
+
     return await event_service.get_upcoming_events(
         limit=limit
     )
@@ -56,6 +64,7 @@ async def get_popular_events(
     limit: int = 10,
     payload = Depends(jwt_validator.validate_token)
 ):
+    
     return await event_service.get_popular_events(
         limit=limit
     )
