@@ -8,6 +8,11 @@ from models.audit import (
     AuditEntity
 )
 
+# Utils:
+from utils import (
+    string_normalizer,
+    email_normalizer
+)
 
 
 # =====================================================
@@ -31,28 +36,57 @@ class AuditQueryBuilder:
         # Query
         query = {}
 
+
+        # --------------------------------------
+        #              Normalization
+        # --------------------------------------
+
+        # Normalize email
+        if user_email:
+
+            user_email = email_normalizer.normalize(
+                user_email
+            )
+
+
+        # Normalize description
+        if description:
+
+            description = string_normalizer.normalize(
+                description
+            )
+
         # --------------------------------------
         #               Filters
         # --------------------------------------
 
         # Email
         if user_email:
+
             query["user_email"] = user_email
+
 
         # Action
         if action:
+
             query["action"] = action
+
 
         # Entity
         if entity:
+
             query["entity"] = entity
+
 
         # Success
         if success is not None:
+
             query["success"] = success
+
 
         # Description (partial match)
         if description:
+
             query["description"] = {
                 "$regex": description,
                 "$options": "i"

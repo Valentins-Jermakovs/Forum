@@ -26,13 +26,12 @@ from .exporter import AuditExporter
 #                     Audit Service
 # =====================================================
 
-
 # This class serves as a high-level interface for managing audit logs.
 # It encapsulates the functionality of writing, reading, and exporting audit logs,
 # providing a unified service for audit-related operations.
 class AuditService:
 
-
+    # Constructor - initialize classes
     def __init__(self):
 
         self._writer = AuditWriter()
@@ -40,6 +39,7 @@ class AuditService:
         self._exporter = AuditExporter()
 
 
+    # Method - write log
     async def create_log(
         self,
         user_email: str,
@@ -49,6 +49,7 @@ class AuditService:
         success: bool = True,
         metadata: dict[str, Any] | None = None
     ) -> AuditLog:
+
 
         return await self._writer.create_log(
             user_email=user_email,
@@ -60,6 +61,7 @@ class AuditService:
         )
 
 
+    # Method for getting logs
     async def get_logs(
         self,
         offset: int = 0,
@@ -83,6 +85,7 @@ class AuditService:
         )
 
 
+    # Method for exporting logs in csv file
     async def export_csv(
         self,
         user_email: str | None = None,
@@ -91,6 +94,8 @@ class AuditService:
         success: bool | None = None,
         description: str | None = None
     ):
+
+        
         return await self._exporter.export_csv(
             user_email=user_email,
             action=action,
