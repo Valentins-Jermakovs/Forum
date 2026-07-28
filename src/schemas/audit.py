@@ -3,7 +3,10 @@
 # =====================================================
 
 # Libraries:
-from pydantic import BaseModel, ConfigDict
+from pydantic import (
+    BaseModel, 
+    ConfigDict
+)
 from datetime import datetime
 from enum import Enum
 from typing import Any

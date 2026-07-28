@@ -4,6 +4,7 @@
 #                        Imports
 # =====================================================
 
+# Event schemas:
 from .event import (
     EventCategory,
     EventStatus,
@@ -19,6 +20,7 @@ from .event import (
     PopularEventsResponse
 )
 
+# Audit schemas:
 from .audit import (
     AuditAction,
     AuditEntity,
@@ -26,6 +28,7 @@ from .audit import (
     AuditLogsResponse
 )
 
+# Metrics schemas:
 from .metrics import (
     SystemMetricsResponse
 )

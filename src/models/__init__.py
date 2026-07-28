@@ -4,6 +4,17 @@
 #                        Imports
 # =====================================================
 
-# Models:
-from .event import LibraryEvent, EventCategory, EventStatus, Participant
-from .audit import AuditLog, AuditAction, AuditEntity
+# Event models:
+from .event import (
+    LibraryEvent, 
+    EventCategory, 
+    EventStatus, 
+    Participant
+)
+
+# Audit models:
+from .audit import (
+    AuditLog, 
+    AuditAction, 
+    AuditEntity
+)

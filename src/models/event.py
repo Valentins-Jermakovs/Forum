@@ -4,8 +4,15 @@
 
 # Libraries:
 from beanie import Document
-from pydantic import BaseModel, Field, EmailStr
-from datetime import date, time, datetime
+from pydantic import (
+    BaseModel, 
+    Field, 
+    EmailStr
+)
+from datetime import (
+    date, 
+    datetime
+)
 from enum import Enum
 
 
@@ -24,6 +31,7 @@ class EventCategory(str, Enum):
     EXHIBITION = "exhibition"
     DISCUSSION = "discussion"
     OTHER = "other"
+
 
 
 # EventStatus Enum

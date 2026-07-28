@@ -3,8 +3,14 @@
 # =====================================================
 
 # Libraries:
-from pydantic import BaseModel, Field, EmailStr, ConfigDict
-from datetime import date, datetime
+from pydantic import (
+    BaseModel, 
+    Field
+)
+from datetime import (
+    date, 
+    datetime
+)
 from beanie import PydanticObjectId
 from enum import Enum
 
@@ -24,6 +30,7 @@ class EventCategory(str, Enum):
     EXHIBITION = "exhibition"
     DISCUSSION = "discussion"
     OTHER = "other"
+
 
 
 # Event status Enum
@@ -173,6 +180,7 @@ class RegisterParticipantRequest(BaseModel):
     participant: ParticipantCreate
 
 
+
 # =====================================================
 #                   Event Response
 # =====================================================
@@ -200,6 +208,7 @@ class EventResponse(BaseModel):
     created_by: str
     created_at: datetime
     updated_at: datetime
+
 
 
 # =====================================================

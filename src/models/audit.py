@@ -25,6 +25,7 @@ class AuditAction(str, Enum):
     CANCEL_REGISTRATION = "cancel_registration"
 
 
+
 # Entities
 class AuditEntity(str, Enum):
 
