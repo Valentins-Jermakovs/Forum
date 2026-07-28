@@ -142,12 +142,6 @@ class EventNormalizer:
         )
 
 
-        # Normalize email
-        participant.email = email_normalizer.normalize(
-            participant.email
-        )
-
-
         # Normalize phone
         participant.phone = (
             participant.phone.strip()
