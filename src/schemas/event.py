@@ -46,8 +46,6 @@ class ParticipantCreate(BaseModel):
         max_length=100
     )
 
-    email: EmailStr
-
     phone: str = Field(
         min_length=5,
         max_length=20
@@ -57,9 +55,9 @@ class ParticipantCreate(BaseModel):
 
 class ParticipantResponse(ParticipantCreate):
 
-    model_config = ConfigDict(
-        from_attributes=True
-    )
+    name: str
+    email: str
+    phone: str
 
 
 

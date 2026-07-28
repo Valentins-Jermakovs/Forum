@@ -38,7 +38,8 @@ class EventRegistration:
     async def register(
         self,
         event: LibraryEvent,
-        participant: ParticipantCreate
+        participant: ParticipantCreate,
+        email: str
     ) -> LibraryEvent:
 
 
@@ -71,7 +72,7 @@ class EventRegistration:
             # Check duplicate registration
             for user in event.participants:
 
-                if user.email == participant.email:
+                if user.email == email:
 
                     raise HTTPException(
                         status_code=400,
@@ -82,7 +83,9 @@ class EventRegistration:
             # Add participant
             event.participants.append(
                 Participant(
-                    **participant.model_dump()
+                    name=participant.name,
+                    phone=participant.phone,
+                    email=email
                 )
             )
 
@@ -97,7 +100,7 @@ class EventRegistration:
 
             # Success audit
             await audit_service.create_log(
-                user_email=participant.email,
+                user_email=email,
                 action=AuditAction.REGISTER,
                 entity=AuditEntity.EVENT,
                 description="Participant registered for event",
@@ -118,7 +121,7 @@ class EventRegistration:
 
             # Failed audit
             await audit_service.create_log(
-                user_email=participant.email,
+                user_email=email,
                 action=AuditAction.REGISTER,
                 entity=AuditEntity.EVENT,
                 description="Failed to register participant for event",

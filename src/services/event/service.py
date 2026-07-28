@@ -60,7 +60,7 @@ class EventService:
     async def create(
         self,
         data: EventCreate,
-        user_id: int,
+        user_id: str,
         user_email: str
     ) -> LibraryEvent:
 
@@ -76,7 +76,7 @@ class EventService:
         self,
         event: LibraryEvent,
         data: EventUpdate,
-        user_id: int,
+        user_id: str,
         user_email: str,
         user_roles: list[str]
     ) -> LibraryEvent:
@@ -112,12 +112,14 @@ class EventService:
     async def register(
         self,
         event: LibraryEvent,
-        participant: ParticipantCreate
+        participant: ParticipantCreate,
+        email: str
     ) -> LibraryEvent:
 
         return await self._registration.register(
             event=event,
-            participant=participant
+            participant=participant,
+            email=email
         )
 
 
@@ -155,7 +157,7 @@ class EventService:
         library: str | None = None,
         category: EventCategory | None = None,
         status: EventStatus | None = None,
-        creator_id: int | None = None,
+        creator_email: str | None = None,
         event_date: str | None = None,
         participant_email: str | None = None
     ) -> EventsResponse:
@@ -167,7 +169,7 @@ class EventService:
             library=library,
             category=category,
             status=status,
-            creator_id=creator_id,
+            creator_email=creator_email,
             event_date=event_date,
             participant_email=participant_email
         )

@@ -15,7 +15,8 @@ from .query import EventQueryBuilder
 # Schemas:
 from schemas import (
     EventsResponse,
-    EventResponse
+    EventResponse,
+    ParticipantResponse
 )
 
 
@@ -43,7 +44,7 @@ class EventReader:
         library: str | None = None,
         category: EventCategory | None = None,
         status: EventStatus | None = None,
-        creator_id: int | None = None,
+        creator_email: str | None = None,
         event_date: str | None = None,
         participant_email: str | None = None
     ) -> EventsResponse:
@@ -55,7 +56,7 @@ class EventReader:
             library=library,
             category=category,
             status=status,
-            creator_id=creator_id,
+            creator_email=creator_email,
             event_date=event_date,
             participant_email=participant_email
         )
@@ -99,7 +100,14 @@ class EventReader:
                     event_time=event.event_time,
                     duration=event.duration,
                     capacity=event.capacity,
-                    participants=event.participants,
+                    participants=[
+                        ParticipantResponse(
+                            name=participant.name,
+                            email=participant.email,
+                            phone=participant.phone
+                        )
+                        for participant in event.participants
+                    ],
                     category=event.category,
                     status=event.status,
                     created_by=event.created_by,

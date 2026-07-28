@@ -96,7 +96,7 @@ class LibraryEvent(Document):
 
 
     # Who created event
-    creator_id: int
+    creator_id: str
     created_by: str
 
 

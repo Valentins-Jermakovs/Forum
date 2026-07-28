@@ -32,7 +32,7 @@ class EventCreator:
     async def create(
         self,
         data: EventCreate,
-        user_id: int,
+        user_id: str,
         user_email: str
     ) -> LibraryEvent:
 

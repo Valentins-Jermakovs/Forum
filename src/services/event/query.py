@@ -11,6 +11,8 @@ from models.event import (
     EventStatus
 )
 
+# Classes:
+from .normalizer import event_normalizer
 
 # =====================================================
 #                Event Query Builder
@@ -27,7 +29,7 @@ class EventQueryBuilder:
         library: str | None = None,
         category: EventCategory | None = None,
         status: EventStatus | None = None,
-        creator_id: int | None = None,
+        creator_email: str | None = None,
         event_date: str | None = None,
         participant_email: str | None = None
     ) -> dict:
@@ -39,6 +41,30 @@ class EventQueryBuilder:
         # --------------------------------------
         #               Filters
         # --------------------------------------
+
+        # Normalize strings
+        if title:
+            title = event_normalizer.normalize_string(
+                title
+            )
+
+
+        if library:
+            library = event_normalizer.normalize_string(
+                library
+            )
+
+
+        if creator_email:
+            creator_email = event_normalizer.normalize_email(
+                creator_email
+            )
+
+
+        if participant_email:
+            participant_email = event_normalizer.normalize_email(
+                participant_email
+            )
 
         # Title
         if title:
@@ -67,22 +93,29 @@ class EventQueryBuilder:
             query["status"] = status
 
         # Creator ID
-        if creator_id:
+        if creator_email:
 
-            query["creator_id"] = creator_id
+            query["created_by"] = {
+                "$regex": creator_email,
+                "$options": "i"
+            }
 
         # Event date
         if event_date:
 
-            query["event_date"] = datetime.strptime(
-                event_date,
-                "%Y-%m-%d"
+            event_date = event_normalizer.normalize_date(
+                event_date
             )
+
+            query["event_date"] = event_date
 
         # Participant email
         if participant_email:
 
-            query["participants.email"] = participant_email
+            query["participants.email"] = {
+                "$regex": participant_email,
+                "$options": "i"
+            }
 
 
         return query

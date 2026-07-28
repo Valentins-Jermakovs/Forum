@@ -40,7 +40,7 @@ class EventUpdater:
         self,
         event: LibraryEvent,
         data: EventUpdate,
-        user_id: int,
+        user_id: str,
         user_email: str,
         user_roles: list[str]
     ) -> LibraryEvent:

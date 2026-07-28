@@ -162,7 +162,7 @@ async def search_events(
     library: str | None = None,
     category: EventCategory | None = None,
     status: EventStatus | None = None,
-    creator_id: int | None = None,
+    creator_email: str | None = None,
     event_date: str | None = None,
     participant_email: str | None = None,
     payload = Depends(jwt_validator.validate_token)
@@ -176,7 +176,7 @@ async def search_events(
         library=library,
         category=category,
         status=status,
-        creator_id=creator_id,
+        creator_email=creator_email,
         event_date=event_date,
         participant_email=participant_email
     )

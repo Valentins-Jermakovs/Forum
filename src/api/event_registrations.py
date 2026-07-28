@@ -53,10 +53,15 @@ async def register_user_to_event(
         event_id
     )
 
+    email = jwt_payload.get_user_email(
+        payload
+    )
+
     # Register the participant to the event
     registered_event = await event_service.register(
         event=event,
-        participant=data
+        participant=data,
+        email=email
     )
 
     return registered_event
