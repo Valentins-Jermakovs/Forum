@@ -3,14 +3,17 @@
 # =====================================================
 
 # Models:
+from models import LibraryEvent
 from models.event import (
-    LibraryEvent, 
-    EventCategory, 
+    EventCategory,
     EventStatus
 )
 
-# Query
-from .query import EventQueryBuilder
+# Repository:
+from repositories import event_repository
+
+# Query:
+from utils import event_query_builder
 
 # Schemas:
 from schemas import (
@@ -25,14 +28,11 @@ from schemas import (
 #                   Event Reader
 # =====================================================
 
-# This class is responsible for reading events from the database.
+# This class is responsible for reading events.
+#
+# Database operations are delegated to EventRepository.
+# This class only handles query building and response mapping.
 class EventReader:
-
-    # Constructor - initializes the EventQueryBuilder 
-    # to build query dictionaries based on provided filters.
-    def __init__(self):
-
-        self.query_builder = EventQueryBuilder()
 
 
     async def get_events(
@@ -48,8 +48,9 @@ class EventReader:
         participant_email: str | None = None
     ) -> EventsResponse:
 
-        # Query the database for events based on the provided filters,
-        query = self.query_builder.build(
+
+        # Build query
+        query = event_query_builder.build(
             title=title,
             library=library,
             category=category,
@@ -60,34 +61,20 @@ class EventReader:
         )
 
 
-        # List of events and total count of events matching the query
-        events = await (
-            LibraryEvent
-            .find(query)
-            .sort(
-                -LibraryEvent.created_at
-            )
-            .skip(offset)
-            .limit(limit)
-            .to_list()
+        # Get events from repository
+        events, total = await event_repository.search(
+            query=query,
+            offset=offset,
+            limit=limit,
+            sort=-LibraryEvent.created_at
         )
 
 
-        # Count total number of events matching the query
-        total = await (
-            LibraryEvent
-            .find(query)
-            .count()
-        )
-
-
-        # Check if there are more events to fetch based on the offset and limit
+        # Pagination check
         has_more = offset + limit < total
 
 
-        # Return a dictionary containing the list of 
-        # events, total count, offset, limit, and a 
-        # boolean indicating if there are more events to fetch.
+
         return EventsResponse(
             items=[
                 EventResponse(

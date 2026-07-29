@@ -5,41 +5,41 @@
 # Libraries:
 from typing import Any
 
+
 # Models:
 from models import (
+    AuditLog,
     AuditAction,
-    AuditEntity,
-    AuditLog
+    AuditEntity
 )
 
-# Schemas
-from schemas import AuditLogsResponse
+
+# Schemas:
+from schemas import (
+    AuditLogsResponse,
+    AuditLogResponse
+)
+
+
+# Repository:
+from repositories import audit_repository
+
 
 # Classes:
-from .writer import AuditWriter
-from .reader import AuditReader
-from .exporter import AuditExporter
+from .audit_exporter import audit_exporter
 
+# Utils:
+from utils import audit_query_builder
 
 
 # =====================================================
-#                     Audit Service
+#                    Audit Service
 # =====================================================
 
-# This class serves as a high-level interface for managing audit logs.
-# It encapsulates the functionality of writing, reading, and exporting audit logs,
-# providing a unified service for audit-related operations.
 class AuditService:
 
-    # Constructor - initialize classes
-    def __init__(self):
 
-        self._writer = AuditWriter()
-        self._reader = AuditReader()
-        self._exporter = AuditExporter()
-
-
-    # Method - write log
+    # Create audit log
     async def create_log(
         self,
         user_email: str,
@@ -51,17 +51,23 @@ class AuditService:
     ) -> AuditLog:
 
 
-        return await self._writer.create_log(
+        log = AuditLog(
             user_email=user_email,
             action=action,
             entity=entity,
             description=description,
             success=success,
-            metadata=metadata
+            metadata=metadata or {}
         )
 
 
-    # Method for getting logs
+        return await audit_repository.create(
+            log
+        )
+
+
+
+    # Get logs
     async def get_logs(
         self,
         offset: int = 0,
@@ -74,9 +80,8 @@ class AuditService:
     ) -> AuditLogsResponse:
 
 
-        return await self._reader.get_logs(
-            offset=offset,
-            limit=limit,
+
+        query = audit_query_builder.build(
             user_email=user_email,
             action=action,
             entity=entity,
@@ -85,7 +90,36 @@ class AuditService:
         )
 
 
-    # Method for exporting logs in csv file
+        logs, total = await audit_repository.find(
+            query=query,
+            offset=offset,
+            limit=limit
+        )
+
+
+        return AuditLogsResponse(
+            items=[
+                AuditLogResponse(
+                    id=str(log.id),
+                    user_email=log.user_email,
+                    action=log.action,
+                    entity=log.entity,
+                    description=log.description,
+                    success=log.success,
+                    metadata=log.metadata,
+                    created_at=log.created_at
+                )
+                for log in logs
+            ],
+            total=total,
+            offset=offset,
+            limit=limit,
+            has_more=offset + limit < total
+        )
+
+
+
+    # Export CSV
     async def export_csv(
         self,
         user_email: str | None = None,
@@ -95,8 +129,8 @@ class AuditService:
         description: str | None = None
     ):
 
-        
-        return await self._exporter.export_csv(
+
+        query = audit_query_builder.build(
             user_email=user_email,
             action=action,
             entity=entity,
@@ -105,5 +139,16 @@ class AuditService:
         )
 
 
-# Create instance of the AuditService to be used throughout the application.
+        logs = await audit_repository.find_all(
+            query
+        )
+
+
+        return audit_exporter.export_csv(
+            logs
+        )
+
+
+
+# Singleton
 audit_service = AuditService()

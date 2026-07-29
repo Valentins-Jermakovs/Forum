@@ -142,3 +142,7 @@ class EventQueryBuilder:
 
 
         return query
+
+
+# Global instance
+event_query_builder = EventQueryBuilder()

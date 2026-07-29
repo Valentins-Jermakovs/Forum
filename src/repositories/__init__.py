@@ -1,11 +1,11 @@
-# ======This file is used to export all services=======
+# ====This file is used to export all repositories=====
 
 # =====================================================
 #                        Imports
 # =====================================================
 
 # Audit:
-from .audit.audit_service import audit_service
+from .audit_repository import audit_repository
 
 # Event:
-from .event.event_service import event_service
+from .event_repository import event_repository

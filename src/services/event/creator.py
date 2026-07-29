@@ -4,30 +4,47 @@
 
 # Models:
 from models import (
-    LibraryEvent, 
-    AuditAction, 
+    LibraryEvent,
+    AuditAction,
     AuditEntity
 )
+
 
 # Schemas:
 from schemas.event import EventCreate
 
+
 # Services:
 from services import audit_service
 
-# Classes
-from .normalizer import event_normalizer
+
+# Repositories:
+from repositories import event_repository
+
+
+# Classes:
+from utils import event_normalizer
 from .validator import event_uniqueness_validator
+
 
 
 # =====================================================
 #                   Event Creator
 # =====================================================
 
-# This class is responsible for creating new events. 
-# It takes the event data, along with the user ID and email of the creator, 
-# and creates a new LibraryEvent instance in the database.
+# This class is responsible for creating new events.
+#
+# Responsibilities:
+# - normalize event data
+# - validate event uniqueness
+# - create event object
+# - save event through repository
+# - write audit logs
+#
+# Database operations are delegated to repository.
 class EventCreator:
+
+
 
     async def create(
         self,
@@ -36,20 +53,25 @@ class EventCreator:
         user_email: str
     ) -> LibraryEvent:
 
+
         try:
 
-            # Normalize data
-            data = event_normalizer.normalize_create(data)
+            # Normalize event data
+            data = event_normalizer.normalize_create(
+                data
+            )
 
 
-            # Validate uniqueness
+
+            # Validate event title uniqueness
             await event_uniqueness_validator.check_title_unique(
                 title=data.title,
                 library=data.library
             )
 
 
-            # Create event
+
+            # Create event document
             event = LibraryEvent(
                 **data.model_dump(),
                 creator_id=user_id,
@@ -57,11 +79,15 @@ class EventCreator:
             )
 
 
-            # Save event
-            await event.insert()
+
+            # Save event through repository
+            await event_repository.create(
+                event
+            )
 
 
-            # Success audit
+
+            # Successful audit log
             await audit_service.create_log(
                 user_email=user_email,
                 action=AuditAction.CREATE,
@@ -75,13 +101,15 @@ class EventCreator:
             )
 
 
+
             return event
+
 
 
         except Exception as error:
 
 
-            # Failed audit
+            # Failed audit log
             await audit_service.create_log(
                 user_email=user_email,
                 action=AuditAction.CREATE,
@@ -91,10 +119,11 @@ class EventCreator:
                 metadata={
                     "title": data.title,
                     "library": data.library,
-                    "error": str(error)
+                    "error": str(error),
+                    "error_type": type(error).__name__
                 }
             )
 
 
-            # Return original error
+            # Re-raise original exception
             raise

@@ -6,15 +6,21 @@
 from fastapi import HTTPException
 from datetime import datetime
 
+
 # Models:
 from models import (
     LibraryEvent,
-    AuditAction, 
+    AuditAction,
     AuditEntity
 )
 
+
 # Services:
 from services import audit_service
+
+
+# Repositories:
+from repositories import event_repository
 
 
 
@@ -22,9 +28,20 @@ from services import audit_service
 #                   Event Cancellation
 # =====================================================
 
-# This class is responsible for handling 
+# This class is responsible for handling
 # the cancellation of participant registrations for events.
+#
+# Responsibilities:
+# - find participant registration
+# - remove participant
+# - update event timestamp
+# - save changes through repository
+# - write audit logs
+#
+# Database operations are delegated to repository.
 class EventCancellation:
+
+
 
     async def cancel(
         self,
@@ -32,18 +49,22 @@ class EventCancellation:
         email: str
     ) -> LibraryEvent:
 
+
         # Store participant
         participant = None
 
 
-        # Try to cance registration,
-        # if failed, write error log
+
         try:
-            # Find participant
+
+            # Find participant by email
             for user in event.participants:
+
                 if user.email == email:
+
                     participant = user
                     break
+
 
 
             # Participant not found
@@ -55,21 +76,27 @@ class EventCancellation:
                 )
 
 
-            # Remove participant
+
+            # Remove participant from event
             event.participants.remove(
                 participant
             )
 
 
-            # Update timestamp
+
+            # Update modification timestamp
             event.updated_at = datetime.now()
 
 
-            # Save changes
-            await event.save()
+
+            # Save changes through repository
+            await event_repository.save(
+                event
+            )
 
 
-            # Success audit
+
+            # Successful audit log
             await audit_service.create_log(
                 user_email=participant.email,
                 action=AuditAction.CANCEL_REGISTRATION,
@@ -84,14 +111,15 @@ class EventCancellation:
             )
 
 
+
             return event
 
 
-        # Error handling
+
         except Exception as error:
 
 
-            # Failed audit
+            # Failed audit log
             await audit_service.create_log(
                 user_email=email,
                 action=AuditAction.CANCEL_REGISTRATION,

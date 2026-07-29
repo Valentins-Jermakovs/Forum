@@ -8,14 +8,17 @@ from fastapi import HTTPException
 # Models:
 from models.event import LibraryEvent
 
+# Repository:
+from repositories import event_repository
+
 
 
 # =====================================================
 #                Event Permission Validator
 # =====================================================
 
-# This class is responsible for validating permissions related to events. 
-# It checks if a user has the necessary permissions to perform actions on an event, 
+# This class is responsible for validating permissions related to events.
+# It checks if a user has the necessary permissions to perform actions on an event,
 # such as modifying or deleting it.
 class EventPermissionValidator:
 
@@ -27,9 +30,11 @@ class EventPermissionValidator:
         roles: list[str]
     ) -> bool:
 
+
         if "admin" in roles:
 
             return True
+
 
         # Check user permission to modify the event
         if event.creator_id != user_id:
@@ -48,9 +53,12 @@ class EventPermissionValidator:
 #              Event Uniqueness Validator
 # =====================================================
 
-# This class is responsible for validating the uniqueness 
+# This class is responsible for validating the uniqueness
 # of event titles within a specific library.
+#
+# Database operations are handled through EventRepository.
 class EventUniquenessValidator:
+
 
     async def check_title_unique(
         self,
@@ -66,20 +74,21 @@ class EventUniquenessValidator:
         }
 
 
-        # Search existing event
-        existing_event = await (
-            LibraryEvent
-            .find_one(query)
+        # Search existing event through repository
+        existing_event = await event_repository.find_existing(
+            query
         )
 
 
         # Nothing found
         if not existing_event:
+
             return
 
 
         # During update ignore current event
         if exclude_id and str(existing_event.id) == exclude_id:
+
             return
 
 
@@ -94,9 +103,10 @@ class EventUniquenessValidator:
 #              Event Capacity Validator
 # =====================================================
 
-# This class is response for checking capacity before
-# update the event
+# This class is responsible for checking capacity before
+# updating the event.
 class EventCapacityValidator:
+
 
     async def check_capacity(
         self,
@@ -104,8 +114,10 @@ class EventCapacityValidator:
         new_capacity: int | None
     ) -> None:
 
+
         # No capacity update
         if new_capacity is None:
+
             return
 
 
@@ -126,8 +138,9 @@ class EventCapacityValidator:
                 )
             )
 
-        
-# Create instance of the validator classes for use in other parts of the application.
+
+
+# Create validator instances
 event_permission_validator = EventPermissionValidator()
 event_uniqueness_validator = EventUniquenessValidator()
 event_capacity_validator = EventCapacityValidator()

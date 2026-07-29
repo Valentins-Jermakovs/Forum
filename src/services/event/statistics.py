@@ -2,56 +2,60 @@
 #                        Imports
 # =====================================================
 
-# Libraries
+# Libraries:
 from datetime import date
 
 # Models:
 from models import LibraryEvent
 
-# Schemas
-from schemas import(
+# Repository:
+from repositories import event_repository
+
+# Schemas:
+from schemas import (
     UpcomingEventsResponse,
     PopularEventsResponse,
     EventStatisticsResponse
 )
+
+
 
 # =====================================================
 #                   Event Statistics
 # =====================================================
 
 # This class is responsible for providing 
-# statistics about events, such as upcoming events 
-# and popular events.
+# statistics about events.
+#
+# Database operations are delegated to EventRepository.
+# This class only handles statistics logic and response mapping.
 class EventStatistics:
 
-    # Get Upcoming Events - retrieves a list of upcoming events
+
+    # Get upcoming events
     async def get_upcoming_events(
         self,
         limit: int = 10
     ) -> UpcomingEventsResponse:
 
-        # Get today's date to filter events 
-        # that are scheduled for today or later.
+
+        # Get today's date
         today = date.today()
 
 
-        # Query the database for events that are scheduled
-        # for today or later and have an "active" status.
-        events = await (
-            LibraryEvent
-            .find(
-                {
-                    "event_date": {
-                        "$gte": today
-                    },
-                    "status": "active"
-                }
-            )
-            .sort(
-                LibraryEvent.event_date
-            )
-            .limit(limit)
-            .to_list()
+        # Build query
+        query = {
+            "event_date": {
+                "$gte": today
+            },
+            "status": "active"
+        }
+
+
+        # Get events from repository
+        events = await event_repository.find_upcoming(
+            query=query,
+            limit=limit
         )
 
 
@@ -75,16 +79,15 @@ class EventStatistics:
         )
 
 
-    # Method to get popular events 
-    # based on the number of participants.
+
+    # Get popular events
     async def get_popular_events(
         self,
         limit: int = 10
     ) -> PopularEventsResponse:
 
-        # Define an aggregation pipeline 
-        # to calculate the number of participants
-        # and sort the events by this count in descending order.
+
+        # Aggregation pipeline
         pipeline = [
             {
                 "$addFields": {
@@ -104,10 +107,10 @@ class EventStatistics:
         ]
 
 
-        # Execute the aggregation pipeline and return the results.
-        events = await LibraryEvent.aggregate(
+        # Execute aggregation through repository
+        events = await event_repository.aggregate(
             pipeline
-        ).to_list()
+        )
 
 
         return PopularEventsResponse(

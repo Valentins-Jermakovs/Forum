@@ -18,11 +18,14 @@ from models import (
 # Schemas:
 from schemas.event import ParticipantCreate
 
+# Repository:
+from repositories import event_repository
+
 # Services:
 from services import audit_service
 
 # Classes:
-from .normalizer import event_normalizer
+from utils import event_normalizer
 
 
 
@@ -32,6 +35,9 @@ from .normalizer import event_normalizer
 
 # This class is responsible for handling 
 # the registration of participants to events.
+#
+# Database operations are delegated to EventRepository.
+# This class only handles business logic.
 class EventRegistration:
 
 
@@ -94,8 +100,10 @@ class EventRegistration:
             event.updated_at = datetime.now()
 
 
-            # Save changes
-            await event.save()
+            # Save changes through repository
+            await event_repository.save(
+                event
+            )
 
 
             # Success audit

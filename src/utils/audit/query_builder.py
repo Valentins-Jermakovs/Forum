@@ -3,10 +3,11 @@
 # =====================================================
 
 # Models:
-from models.audit import (
+from models import (
     AuditAction,
     AuditEntity
 )
+
 
 # Utils:
 from utils import (
@@ -15,12 +16,11 @@ from utils import (
 )
 
 
+
 # =====================================================
-#                  Audit Query Builder
+#              Audit Query Builder
 # =====================================================
 
-# This class is responsible for 
-# building queries to retrieve audit logs
 class AuditQueryBuilder:
 
 
@@ -33,13 +33,9 @@ class AuditQueryBuilder:
         description: str | None = None
     ) -> dict:
 
-        # Query
+
         query = {}
 
-
-        # --------------------------------------
-        #              Normalization
-        # --------------------------------------
 
         # Normalize email
         if user_email:
@@ -56,35 +52,34 @@ class AuditQueryBuilder:
                 description
             )
 
-        # --------------------------------------
-        #               Filters
-        # --------------------------------------
 
-        # Email
+
+        # Filters
+
         if user_email:
 
             query["user_email"] = user_email
 
 
-        # Action
+
         if action:
 
             query["action"] = action
 
 
-        # Entity
+
         if entity:
 
             query["entity"] = entity
 
 
-        # Success
+
         if success is not None:
 
             query["success"] = success
 
 
-        # Description (partial match)
+
         if description:
 
             query["description"] = {
@@ -94,3 +89,7 @@ class AuditQueryBuilder:
 
 
         return query
+
+
+# Global instance
+audit_query_builder = AuditQueryBuilder()

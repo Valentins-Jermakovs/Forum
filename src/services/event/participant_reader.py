@@ -3,12 +3,14 @@
 # =====================================================
 
 # Models:
-from models.event import LibraryEvent
+from models import LibraryEvent
+
+# Repository:
+from repositories import event_repository
 
 # Classes:
-from .query import EventQueryBuilder
+from utils import event_query_builder
 
-# Schemas:
 # Schemas:
 from schemas import (
     EventsResponse,
@@ -17,19 +19,17 @@ from schemas import (
 )
 
 
+
 # =====================================================
 #              Participant Event Reader
 # =====================================================
 
-# This class is responsible for reading events 
+# This class is responsible for reading events
 # that a participant has registered for.
+#
+# It does not communicate directly with MongoDB.
+# All database operations are handled by EventRepository.
 class ParticipantEventReader:
-
-    # Constructor - initializes the EventQueryBuilder
-    # for building queries to fetch participant events.
-    def __init__(self):
-
-        self.query_builder = EventQueryBuilder()
 
 
     async def get_registered_events(
@@ -39,35 +39,25 @@ class ParticipantEventReader:
         limit: int = 20
     ) -> EventsResponse:
 
-        # Query
-        query = self.query_builder.build(
+
+        # Build query
+        query = event_query_builder.build(
             participant_email=email
         )
 
 
-        # List of events
-        events = await (
-            LibraryEvent
-            .find(query)
-            .sort(
-                -LibraryEvent.event_date
-            )
-            .skip(offset)
-            .limit(limit)
-            .to_list()
+        # Get events from repository
+        events, total = await event_repository.search(
+            query=query,
+            offset=offset,
+            limit=limit,
+            sort=-LibraryEvent.event_date
         )
 
 
-        # Count total events for pagination
-        total = await (
-            LibraryEvent
-            .find(query)
-            .count()
-        )
-
-
-        # Check if there are more events to fetch
+        # Pagination check
         has_more = offset + limit < total
+
 
 
         return EventsResponse(
@@ -85,10 +75,10 @@ class ParticipantEventReader:
                     capacity=event.capacity,
                     participants=[
                         ParticipantResponse(
-                                name=participant.name,
-                                email=participant.email,
-                                phone=participant.phone
-                            )
+                            name=participant.name,
+                            email=participant.email,
+                            phone=participant.phone
+                        )
                         for participant in event.participants
                     ],
                     category=event.category,

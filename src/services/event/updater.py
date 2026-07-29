@@ -12,6 +12,9 @@ from models import (
     AuditEntity
 )
 
+# Repository:
+from repositories import event_repository
+
 # Schemas:
 from schemas.event import EventUpdate
 
@@ -21,7 +24,7 @@ from .validator import (
     event_uniqueness_validator,
     event_capacity_validator
 )
-from .normalizer import event_normalizer
+from utils import event_normalizer
 
 # Services:
 from services import audit_service
@@ -33,6 +36,9 @@ from services import audit_service
 # =====================================================
 
 # This class is responsible for updating existing events.
+#
+# Database operations are delegated to EventRepository.
+# This class only handles business logic.
 class EventUpdater:
 
 
@@ -110,8 +116,10 @@ class EventUpdater:
             event.updated_at = datetime.now()
 
 
-            # Save changes
-            await event.save()
+            # Save changes through repository
+            await event_repository.save(
+                event
+            )
 
 
             # Success audit

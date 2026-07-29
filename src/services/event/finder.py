@@ -2,11 +2,11 @@
 #                        Imports
 # =====================================================
 
-# Libraries:
 from fastapi import HTTPException
 
-# Models
-from models.event import LibraryEvent
+from models import LibraryEvent
+
+from repositories import event_repository
 
 
 
@@ -14,8 +14,7 @@ from models.event import LibraryEvent
 #                   Event Finder
 # =====================================================
 
-# This class is responsible for finding
-# a single event by its ID.
+
 class EventFinder:
 
 
@@ -24,13 +23,12 @@ class EventFinder:
         event_id: str
     ) -> LibraryEvent:
 
-        # Get event by ID
-        event = await LibraryEvent.get(
+
+        event = await event_repository.find_by_id(
             event_id
         )
 
 
-        # If the event is not found, raise a 404 HTTPException
         if not event:
 
             raise HTTPException(

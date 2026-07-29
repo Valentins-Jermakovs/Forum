@@ -10,10 +10,8 @@ from schemas.event import (
 )
 
 # Utils:
-from utils import (
-    string_normalizer,
-    email_normalizer
-)
+from utils import string_normalizer
+
 
 
 

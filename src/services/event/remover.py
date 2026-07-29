@@ -9,6 +9,9 @@ from models import (
     AuditEntity
 )
 
+# Repository:
+from repositories import event_repository
+
 # Classes:
 from .validator import event_permission_validator
 
@@ -21,7 +24,10 @@ from services import audit_service
 #                   Event Remover
 # =====================================================
 
-# This class is responsible for removing events from the database.
+# This class is responsible for removing events.
+#
+# Database operations are delegated to EventRepository.
+# This class only handles business logic.
 class EventRemover:
 
 
@@ -54,8 +60,10 @@ class EventRemover:
             }
 
 
-            # Delete event from database
-            await event.delete()
+            # Delete event through repository
+            await event_repository.delete(
+                event
+            )
 
 
             # Success audit
